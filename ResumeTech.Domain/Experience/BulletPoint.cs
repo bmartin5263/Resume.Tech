@@ -1,9 +1,8 @@
-namespace ResumeTech.Domain.Experience; 
+using ResumeTech.Common.Domain;
+using ResumeTech.Domain.Common;
 
-public class BulletPoint {
-    public string Text { get; set; }
-    
-    public BulletPoint(string text) {
-        Text = text;
-    }
+namespace ResumeTech.Domain.Experience;
+
+public record BulletPoint(string Value) : IWrapper<string> {
+    private BulletPoint() : this(Value: null!) {}
 }

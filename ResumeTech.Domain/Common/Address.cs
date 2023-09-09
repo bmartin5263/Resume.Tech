@@ -1,3 +1,5 @@
-namespace ResumeTech.Domain.Common; 
+namespace ResumeTech.Domain.Common;
 
-public record Address(string City, string State, string Country);
+public sealed record Address(string City, string State, string Country) {
+    private Address() : this("", "", "") {}
+}

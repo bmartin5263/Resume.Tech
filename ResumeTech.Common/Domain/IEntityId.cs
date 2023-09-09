@@ -1,4 +1,4 @@
-namespace ResumeTech.Domain.Common; 
+namespace ResumeTech.Common.Domain; 
 
 public interface IEntityId : IWrapper<Guid> {
 }

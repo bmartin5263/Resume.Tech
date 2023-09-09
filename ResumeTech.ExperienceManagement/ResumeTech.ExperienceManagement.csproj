@@ -8,6 +8,7 @@
 
     <ItemGroup>
       <ProjectReference Include="..\ResumeTech.Common\ResumeTech.Common.csproj" />
+      <ProjectReference Include="..\ResumeTech.Resources\ResumeTech.Resources.csproj" />
     </ItemGroup>
 
 </Project>

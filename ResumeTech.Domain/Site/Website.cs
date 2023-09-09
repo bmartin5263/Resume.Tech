@@ -1,9 +1,11 @@
+using ResumeTech.Common;
+using ResumeTech.Common.Domain;
 using ResumeTech.Domain.Common;
 using ResumeTech.Domain.Util;
 
 namespace ResumeTech.Domain.Site; 
 
-public class Website : IAudited {
+public class Website : IEntity {
 
     private IList<IPage>? _pages;
     public IReadOnlyList<IPage> Pages => _pages.ToReadOnly();

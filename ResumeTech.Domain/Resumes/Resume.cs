@@ -1,11 +1,15 @@
 using System.Collections.Immutable;
+using ResumeTech.Common;
+using ResumeTech.Common.Domain;
 using ResumeTech.Domain.Common;
 
 namespace ResumeTech.Domain.Resumes;
 
-public class Resume : IAudited {
+public class Resume : IEntity {
+    
     public string Nickname { get; set; }
-    public ContactDetails ContactDetails { get; set; }
+    
+    public ContactDetails? ContactDetails { get; set; }
 
     private IList<IResumeSection>? _sections;
     private IReadOnlyList<IResumeSection>? Sections => _sections?.AsReadOnly();

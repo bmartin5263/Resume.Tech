@@ -4,9 +4,10 @@ using ResumeTech.Domain.Util;
 namespace ResumeTech.Domain.Experience; 
 
 public class Job {
+    
     public string CompanyName { get; set; }
-    public string? Location { get; set; }
-    public PhoneNumber? PhoneNumber { get; set; }
+    
+    public Address? Address { get; set; }
     
     private IList<JobPosition>? _positions;
     public IReadOnlyList<JobPosition> Positions => _positions.ToReadOnly();
@@ -29,6 +30,4 @@ public class Job {
         _positions ??= new List<JobPosition>();
         _positions.Add(position);
     }
-    
-    
 }

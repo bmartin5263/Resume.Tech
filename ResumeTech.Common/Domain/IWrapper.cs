@@ -1,4 +1,4 @@
-namespace ResumeTech.Domain.Common;
+namespace ResumeTech.Common.Domain;
 
 /**
  * Interface representing classes who's only purpose is to wrap another non-null object, with the
