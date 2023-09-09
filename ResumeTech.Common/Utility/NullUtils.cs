@@ -5,6 +5,18 @@ namespace ResumeTech.Common.Utility;
 
 public static class NullUtils {
 
+    public static T OrDefault<T>(this T? self) where T : new() {
+        return self != null ? self : new T();
+    }
+    
+    public static T OrElse<T>(this T? self, T other) {
+        return self != null ? self : other;
+    }
+    
+    public static string OrBlank(this string? self) {
+        return self != null ? self : string.Empty;
+    }
+    
     public static T OrElseThrow<T>(this T? self, Func<Exception> supplier) {
         if (self == null) {
             throw supplier();

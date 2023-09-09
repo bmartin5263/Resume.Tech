@@ -16,9 +16,9 @@ public enum AppSubErrorType {
     DataInvalid
 }
 
-public record AppSubError(string Path, string Message);
+public sealed record AppSubError(string Path, string Message);
 
-public record AppError {
+public sealed record AppError {
     public Exception? CausedBy { get; }
     public AppErrorType ErrorType { get; }
     public HttpStatusCode StatusCode { get; }
@@ -130,12 +130,12 @@ public class AppErrorBuilder {
     }
 }
 
-public record AppSubErrorDto(
+public sealed record AppSubErrorDto(
     [property: JsonIgnore(Condition = WhenWritingNull)] string? Path = null,
     [property: JsonIgnore(Condition = WhenWritingNull)] string? Message = null
 );
 
-public record AppErrorDto(
+public sealed record AppErrorDto(
     [property: JsonIgnore(Condition = WhenWritingNull)] string? CausedBy = null,
     [property: JsonIgnore(Condition = WhenWritingNull)] string? ErrorType = null, 
     [property: JsonIgnore(Condition = WhenWritingNull)] string? UserMessage = null, 

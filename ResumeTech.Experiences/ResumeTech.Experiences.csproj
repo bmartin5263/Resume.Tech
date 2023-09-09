@@ -1,0 +1,16 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+    <PropertyGroup>
+        <TargetFramework>net7.0</TargetFramework>
+        <ImplicitUsings>enable</ImplicitUsings>
+        <Nullable>enable</Nullable>
+        <RootNamespace>ResumeTech.Experiences</RootNamespace>
+    </PropertyGroup>
+
+    <ItemGroup>
+      <ProjectReference Include="..\ResumeTech.Common\ResumeTech.Common.csproj" />
+      <ProjectReference Include="..\ResumeTech.Identities\ResumeTech.Identities.csproj" />
+      <ProjectReference Include="..\ResumeTech.Resources\ResumeTech.Resources.csproj" />
+    </ItemGroup>
+
+</Project>
