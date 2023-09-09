@@ -2,7 +2,7 @@ using System.Collections;
 using System.Collections.Immutable;
 using System.Collections.ObjectModel;
 
-namespace ResumeTech.Domain.Util;
+namespace ResumeTech.Common.Utility;
 
 public static class ReadOnly {
     public static IReadOnlyList<T> List<T>() {

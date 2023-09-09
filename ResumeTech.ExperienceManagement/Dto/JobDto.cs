@@ -7,8 +7,7 @@ public record JobDto(
     DateTimeOffset CreatedAt = default,
     DateTimeOffset? UpdatedAt = default,
     DateTimeOffset? DeletedAt = default,
-    string? Name = default,
-    DateOnlyRange Dates = default
+    string? Name = default
 );
 
 public static class JobDtoUtil {
@@ -18,8 +17,7 @@ public static class JobDtoUtil {
             CreatedAt: job.CreatedAt,
             UpdatedAt: job.UpdatedAt,
             DeletedAt: job.DeletedAt,
-            Name: job.Name,
-            Dates: job.Dates
+            Name: job.CompanyName
         );
     }
 }

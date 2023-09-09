@@ -4,16 +4,12 @@ using ResumeTech.ExperienceManagement.Domain;
 namespace ResumeTech.ExperienceManagement.Dto;
 
 public sealed record JobPatch(
-    RequiredFieldPatch<string>? Name = default,
-    RequiredFieldPatch<DateOnlyRange>? Dates = default
+    RequiredFieldPatch<string>? Name = default
 ) {
 
     public void ApplyTo(Job job) {
         if (Name.HasValue) {
-            job.Name = Name.Value.NewValue;
-        }
-        if (Dates.HasValue) {
-            job.Dates = Dates.Value.NewValue;
+            job.CompanyName = Name.Value.NewValue;
         }
     }
     

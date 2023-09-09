@@ -13,7 +13,7 @@ public class JobManager {
     }
 
     public JobDto CreateJob(CreateJobRequest request) {
-        var job = new Job(Name: request.Name);
+        var job = new Job(CompanyName: request.Name);
         JobRepository.Add(job);
         return job.ToDto();
     }

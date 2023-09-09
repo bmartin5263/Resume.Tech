@@ -3,11 +3,10 @@ using ResumeTech.Common.Domain;
 
 namespace ResumeTech.ExperienceManagement.Domain;
 
-public class Job : IProject, IEntity {
+public class Job : IEntity {
 
     // Common Project Properties
-    public string Name { get; set; }
-    public DateOnlyRange Dates { get; set; }
+    public string CompanyName { get; set; }
     public IProjectId ProjectId => Id;
 
     // Common Entity Properties
@@ -18,10 +17,10 @@ public class Job : IProject, IEntity {
 
     // Default Constructor Needed for Persistence
     private Job() {
-        Name = null!;
+        CompanyName = null!;
     }
 
-    public Job(string Name) {
-        this.Name = Name;
+    public Job(string CompanyName) {
+        this.CompanyName = CompanyName;
     }
 }

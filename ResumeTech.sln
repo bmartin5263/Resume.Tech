@@ -2,8 +2,6 @@
 Microsoft Visual Studio Solution File, Format Version 12.00
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ResumeTech.Application", "ResumeTech.Application\ResumeTech.Application.csproj", "{0C5B52A1-5ED4-4B7B-A3F1-AD9F9462A817}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ResumeTech.Domain", "ResumeTech.Domain\ResumeTech.Domain.csproj", "{E243F9C1-C320-47F7-BCB8-D439DFB76588}"
-EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ResumeTech.ExperienceManagement", "ResumeTech.ExperienceManagement\ResumeTech.ExperienceManagement.csproj", "{E038A017-A072-4032-B7AF-11426B464835}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ResumeTech.Common", "ResumeTech.Common\ResumeTech.Common.csproj", "{E9408788-45D3-4ACF-A3D0-1DD748C01E39}"
@@ -20,10 +18,6 @@ Global
 		{0C5B52A1-5ED4-4B7B-A3F1-AD9F9462A817}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{0C5B52A1-5ED4-4B7B-A3F1-AD9F9462A817}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{0C5B52A1-5ED4-4B7B-A3F1-AD9F9462A817}.Release|Any CPU.Build.0 = Release|Any CPU
-		{E243F9C1-C320-47F7-BCB8-D439DFB76588}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{E243F9C1-C320-47F7-BCB8-D439DFB76588}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{E243F9C1-C320-47F7-BCB8-D439DFB76588}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{E243F9C1-C320-47F7-BCB8-D439DFB76588}.Release|Any CPU.Build.0 = Release|Any CPU
 		{E038A017-A072-4032-B7AF-11426B464835}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{E038A017-A072-4032-B7AF-11426B464835}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{E038A017-A072-4032-B7AF-11426B464835}.Release|Any CPU.ActiveCfg = Release|Any CPU

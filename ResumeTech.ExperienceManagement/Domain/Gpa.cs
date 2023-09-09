@@ -1,4 +1,4 @@
-namespace ResumeTech.Domain.Experience;
+namespace ResumeTech.ExperienceManagement.Domain;
 
 public readonly record struct Gpa {
     public decimal Value { get; }
