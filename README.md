@@ -22,23 +22,23 @@ Resume.Tech roughly follows Domain Driven Design principals. The overall applica
   - Classes include: `Website`, `IPage`, `ResumePage`
 
 ### Object Types
-- Entity
+- **Entity**
   - Any business object that uses identity-based equality
   - Should use a stongly-typed id. For example, `Job` will have a `JobId`
   - May store references to other entities, but they must be read-only references
     - If referring to an entity in another subdomain, it must be referenced by Id and not the entity itself
   - Examples: `JobPosition`, `ResumeSection`
-- Aggregate Root
+- **Aggregate Root**
   - Any entity that manages child entities where all operations mutating the children go through the root
   - The only entities accessed through a `Repository` class
   - Examples: `Profile`, `Job`, `Website`
-- Value Object
+- **Value Object**
   - Any business object that uses value-based equality
   - Should be immutable
   - Usually a `sealed record`, but can be a `readonly record struct` when a parameterless default constructor is permissable
-- Service
+- **Service**
   - Any stateless business object that performs some sort of business operation
   - Usually a singleton due to its stateless nature
-- POCO
+- **POCO**
   - Anything that doesn't follow into the above categories
   - Can be a `class`, `record`, or a `struct` depending on whatever makes sense for that usecase
