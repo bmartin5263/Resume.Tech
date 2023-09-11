@@ -2,4 +2,4 @@ using ResumeTech.Common.Utility;
 
 namespace ResumeTech.Experiences.Jobs; 
 
-public sealed record CreateJobRequest(string Name);
+public sealed record GetJobByIdRequest(JobId Id);

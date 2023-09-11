@@ -1,12 +1,12 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ResumeTech.Application", "ResumeTech.Application\ResumeTech.Application.csproj", "{0C5B52A1-5ED4-4B7B-A3F1-AD9F9462A817}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ResumeTech.WebApp", "ResumeTech.WebApp\ResumeTech.WebApp.csproj", "{0C5B52A1-5ED4-4B7B-A3F1-AD9F9462A817}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ResumeTech.Experiences", "ResumeTech.Experiences\ResumeTech.Experiences.csproj", "{E038A017-A072-4032-B7AF-11426B464835}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ResumeTech.Common", "ResumeTech.Common\ResumeTech.Common.csproj", "{E9408788-45D3-4ACF-A3D0-1DD748C01E39}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ResumeTech.Resources", "ResumeTech.Resources\ResumeTech.Resources.csproj", "{13DDA12B-9760-4B36-8413-EEB6FC0A5F3F}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ResumeTech.Media", "ResumeTech.Media\ResumeTech.Media.csproj", "{13DDA12B-9760-4B36-8413-EEB6FC0A5F3F}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ResumeTech.Identities", "ResumeTech.Identities\ResumeTech.Identities.csproj", "{8B875291-5D5C-46AF-9D99-6462B8AFA9F4}"
 EndProject

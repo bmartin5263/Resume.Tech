@@ -10,9 +10,9 @@ public sealed record Address {
     public string? Country { get; }
 
     public Address(string? City = null, string? State = null, string? Country = null) {
-        this.City = City?.AssertTrimmedMaxLength(MaxFieldLength, "City");
-        this.State = State?.AssertTrimmedMaxLength(MaxFieldLength, "State");
-        this.Country = Country?.AssertTrimmedMaxLength(MaxFieldLength, "Country");
+        this.City = City?.AssertMaxTrimmedLength(MaxFieldLength, "City");
+        this.State = State?.AssertMaxTrimmedLength(MaxFieldLength, "State");
+        this.Country = Country?.AssertMaxTrimmedLength(MaxFieldLength, "Country");
     }
 
     public void Deconstruct(

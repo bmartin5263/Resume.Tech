@@ -14,7 +14,7 @@ public sealed record Link {
     }
 
     public Link(string WebsiteName, Uri Uri) {
-        this.WebsiteName = WebsiteName.AssertTrimmedMaxLength(MaxFieldLength, "Website Name");
+        this.WebsiteName = WebsiteName.AssertMaxTrimmedLength(MaxFieldLength, "Website Name");
         this.Uri = Uri;
     }
 

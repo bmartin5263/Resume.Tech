@@ -16,9 +16,16 @@ public class JobManager {
         return job.ToDto();
     }
     
-    public JobDto UpdateJob(JobId id, JobPatch patch) {
-        var job = JobRepository.FindById(id).OrElseThrow(() => new ArgumentException($"Job not found by id: {id}"));
-        patch.ApplyTo(job);
+    public JobDto GetJobById(GetJobByIdRequest request) {
+        return JobRepository.FindById(request.Id)
+            .OrElseThrow(() => new ArgumentException($"Job not found by id: {request.Id}"))
+            .ToDto();
+    }
+    
+    public JobDto UpdateJob(PatchJobRequest request) {
+        var job = JobRepository.FindById(request.Id)
+            .OrElseThrow(() => new ArgumentException($"Job not found by id: {request.Id}"));
+        request.ApplyTo(job);
         return job.ToDto();
     }
 }

@@ -1,7 +1,6 @@
-using ResumeTech.Common;
 using ResumeTech.Common.Domain;
 
-namespace ResumeTech.Resources.Domain;
+namespace ResumeTech.Media.Domain;
 
 public class ImageRef : IEntity {
     public Uri Location { get; private set; }

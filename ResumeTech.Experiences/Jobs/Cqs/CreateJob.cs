@@ -1,6 +1,6 @@
 using ResumeTech.Common.Cqs.Commands;
 
-namespace ResumeTech.Experiences.Jobs;
+namespace ResumeTech.Experiences.Jobs.Cqs;
 
 public class CreateJob : CqsCommand<CreateJobRequest, JobDto> {
     public override string Name => "CreateJob";

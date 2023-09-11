@@ -15,13 +15,9 @@ public abstract class CqsCommand {
 }
 
 public abstract class CqsCommand<I, O> : CqsCommand {
-    public override Task<object?> Execute(object? args) {
-        return Execute((I)args.OrElseThrow("Unexpected null command arguments")).ContinueWith(t => {
-            if (t.IsFaulted) {
-                throw t.Exception!.InnerException!;
-            }
-            return (object?) t.Result;
-        });
+    public override async Task<object?> Execute(object? args) {
+        var result = await Execute((I)args.OrElseThrow("Unexpected null command arguments"));
+        return result;
     }
 
     public abstract Task<O> Execute(I args);

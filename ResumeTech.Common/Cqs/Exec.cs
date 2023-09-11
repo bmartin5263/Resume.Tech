@@ -2,7 +2,6 @@ using NLog;
 using ResumeTech.Common.Cqs.Commands;
 using ResumeTech.Common.Cqs.Queries;
 using ResumeTech.Common.Events;
-using ResumeTech.Common.Exceptions;
 using ResumeTech.Common.Service;
 using ResumeTech.Common.Utility;
 

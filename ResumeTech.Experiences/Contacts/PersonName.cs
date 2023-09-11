@@ -16,9 +16,9 @@ public sealed record PersonName {
     }
 
     public PersonName(string FirstName, string? MiddleName = null, string? LastName = null) {
-        this.FirstName = FirstName.AssertTrimmedMaxLength(MaxFieldLength, "First name");
-        this.MiddleName = MiddleName?.AssertTrimmedMaxLength(MaxFieldLength, "Middle Name");
-        this.LastName = LastName?.AssertTrimmedMaxLength(MaxFieldLength, "Last Name");
+        this.FirstName = FirstName.AssertMaxTrimmedLength(MaxFieldLength, "First name");
+        this.MiddleName = MiddleName?.AssertMaxTrimmedLength(MaxFieldLength, "Middle Name");
+        this.LastName = LastName?.AssertMaxTrimmedLength(MaxFieldLength, "Last Name");
     }
 
     public void Deconstruct(

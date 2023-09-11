@@ -1,7 +1,6 @@
-using ResumeTech.Common;
 using ResumeTech.Common.Domain;
 
-namespace ResumeTech.Resources.Domain;
+namespace ResumeTech.Media.Domain;
 
 public readonly record struct VideoRefId(Guid Value) : IEntityId {
     public static VideoRefId Generate() => new(Guid.NewGuid());

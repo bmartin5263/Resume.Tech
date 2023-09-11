@@ -3,15 +3,15 @@ namespace ResumeTech.Common.Exceptions;
 public class AppException : Exception {
     public AppError Error { get; }
 
-    public AppException(string? message) : base(message) {
-        Error = new AppError(DeveloperMessage: message);
+    public AppException(string? DeveloperMessage) : base(DeveloperMessage) {
+        Error = new AppError(DeveloperMessage: DeveloperMessage);
     }
 
-    public AppException(string? message, Exception? innerException) : base(message, innerException) {
-        Error = new AppError(DeveloperMessage: message, CausedBy: innerException);
+    public AppException(string? DeveloperMessage, Exception? CausedBy) : base(DeveloperMessage, CausedBy) {
+        Error = new AppError(DeveloperMessage: DeveloperMessage, CausedBy: CausedBy);
     }
 
-    public AppException(AppError error): base(error.UserMessage, error.CausedBy) {
-        Error = error;
+    public AppException(AppError Error): base(Error.UserMessage, Error.CausedBy) {
+        this.Error = Error;
     }
 }

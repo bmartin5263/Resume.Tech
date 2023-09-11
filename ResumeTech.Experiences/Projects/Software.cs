@@ -1,6 +1,6 @@
 using ResumeTech.Common.Domain;
 using ResumeTech.Experiences.Common;
-using ResumeTech.Resources.Domain;
+using ResumeTech.Media.Domain;
 
 namespace ResumeTech.Experiences.Projects;
 

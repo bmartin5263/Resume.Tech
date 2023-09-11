@@ -1,10 +1,10 @@
 namespace ResumeTech.Common.Attributes; 
 
 [AttributeUsage(AttributeTargets.Class | AttributeTargets.Struct | AttributeTargets.Field | AttributeTargets.Property)]
-public class PII : Attribute {
+public class PIIAttribute : Attribute {
     public bool Sensitive { get; }
     
-    public PII(bool Sensitive) {
+    public PIIAttribute(bool Sensitive) {
         this.Sensitive = Sensitive;
     }
 }
