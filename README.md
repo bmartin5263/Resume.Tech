@@ -36,9 +36,18 @@ Resume.Tech roughly follows Domain Driven Design principals. The overall applica
   - Any business object that uses value-based equality
   - Should be immutable
   - Usually a `sealed record`, but can be a `readonly record struct` when a parameterless default constructor is permissable
+  - Examples: `JobPosition`, `ResumeSection`
 - **Service**
   - Any stateless business object that performs some sort of business operation
   - Usually a singleton due to its stateless nature
+  - Examples: `JobManager`
+- **Command**
+  - A service that represents a single transactional operation that mutates the state of the application
+  - Examples: `CreateJob`, `PatchJob`
+- **Query**
+  - A service that represents a query that can read state but not mutate it
+  - Examples: `GetJobById`
 - **POCO**
   - Anything that doesn't follow into the above categories
+  - DTOs and request objects fall into this category
   - Can be a `class`, `record`, or a `struct` depending on whatever makes sense for that usecase
