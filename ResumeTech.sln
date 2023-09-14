@@ -10,6 +10,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ResumeTech.Media", "ResumeT
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ResumeTech.Identities", "ResumeTech.Identities\ResumeTech.Identities.csproj", "{8B875291-5D5C-46AF-9D99-6462B8AFA9F4}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ResumeTech.Persistence.InMemory", "ResumeTech.Persistence.InMemory\ResumeTech.Persistence.InMemory.csproj", "{58FB4F5D-6FBD-4652-916B-80CA5A74176C}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -36,5 +38,9 @@ Global
 		{8B875291-5D5C-46AF-9D99-6462B8AFA9F4}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{8B875291-5D5C-46AF-9D99-6462B8AFA9F4}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{8B875291-5D5C-46AF-9D99-6462B8AFA9F4}.Release|Any CPU.Build.0 = Release|Any CPU
+		{58FB4F5D-6FBD-4652-916B-80CA5A74176C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{58FB4F5D-6FBD-4652-916B-80CA5A74176C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{58FB4F5D-6FBD-4652-916B-80CA5A74176C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{58FB4F5D-6FBD-4652-916B-80CA5A74176C}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal

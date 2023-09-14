@@ -1,48 +1,41 @@
+using System.Reflection;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 using Microsoft.AspNetCore.Http.Json;
-using Microsoft.OpenApi.Any;
 using Microsoft.OpenApi.Models;
-using ResumeTech.Application.Adapters;
 using ResumeTech.Application.Serialization;
-using ResumeTech.Application.Serialization.Converters;
 using ResumeTech.Common.Cqs.Commands;
 using ResumeTech.Common.Cqs.Queries;
-using ResumeTech.Common.Domain;
 using ResumeTech.Common.Json;
+using ResumeTech.Common.Repository;
 using ResumeTech.Common.Utility;
 using ResumeTech.Experiences.Jobs;
+using ResumeTech.Identities.Domain;
+using ResumeTech.Identities.Filters;
+using ResumeTech.Identities.Util;
 using Swashbuckle.AspNetCore.SwaggerGen;
 using MvcJsonOptions = Microsoft.AspNetCore.Mvc.JsonOptions;
 
 namespace ResumeTech.Application;
 
 internal class Program {
+    public const string RootAssembly = "ResumeTech";
 
     protected Program() {
         
     }
     
     public static void Main(string[] args) {
+        AppDomain.CurrentDomain.Load(new AssemblyName("ResumeTech.Identities"));
+
         var builder = WebApplication.CreateBuilder(args);
         var mappedTypes = TypeMapping.GenerateTypeMappings();
 
         ConfigureJson(builder, mappedTypes);
         ConfigureSwagger(builder, mappedTypes);
 
-        // Add services to the container.
-        
-        var commandTypes = typeof(CqsCommand).FindAllKnownSubtypes("ResumeTech");
-        foreach (var commandType in commandTypes) {
-            builder.Services.AddScoped(commandType);
-        }
-        var queryTypes = typeof(CqsQuery).FindAllKnownSubtypes("ResumeTech");
-        foreach (var queryType in queryTypes) {
-            builder.Services.AddScoped(queryType);
-        }
-        
+        AutoAddServices(builder);
         builder.Services.AddScoped<JobManager>();
-        builder.Services.AddSingleton<IJobRepository, JobMemoryRepository>();
 
         builder.Services.AddControllers();
         // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
@@ -57,6 +50,52 @@ internal class Program {
         app.MapControllers();
 
         app.Run();
+    }
+
+    private static void AutoAddServices(WebApplicationBuilder builder) {
+        AutoAddCqsCommands(builder);
+        AutoAddCqsQueries(builder);
+
+        builder.Services.AddScoped<UserIdProvider>();
+        builder.Services.AddScoped<Authorizer<Job>>(s => new Authorizer<Job>(
+            Filters: new List<IAccessFilter<Job>>() {
+                new IsOwnerFilter<Job>()
+            },
+            UserIdProvider: s.GetRequiredService<UserIdProvider>()
+        ));
+        if (builder.Environment.IsDevelopment()) {
+            AddInMemoryRepositories(builder);
+        }
+        else {
+            throw new ArgumentException("Invalid profile");
+        }
+    }
+
+    private static void AutoAddCqsCommands(WebApplicationBuilder builder) {
+        var commandTypes = typeof(CqsCommand).FindAllKnownSubtypes(RootAssembly);
+        foreach (var commandType in commandTypes) {
+            Console.WriteLine($"Adding Command: {commandType}");
+            builder.Services.AddScoped(commandType);
+        }
+    }
+
+    private static void AutoAddCqsQueries(WebApplicationBuilder builder) {
+        var queryTypes = typeof(CqsQuery).FindAllKnownSubtypes(RootAssembly);
+        foreach (var queryType in queryTypes) {
+            Console.WriteLine($"Adding Query: {queryType}");
+            builder.Services.AddScoped(queryType);
+        }
+    }
+
+    private static void AddInMemoryRepositories(WebApplicationBuilder builder) {
+        AppDomain.CurrentDomain.Load(new AssemblyName("ResumeTech.Persistence.InMemory"));
+        IDictionary<Type, ISet<Type>> repoTypes = RepositoryUtils.FindRepositoryTypes(RootAssembly);
+        foreach (var (repoType, interfaceTypes) in repoTypes) {
+            foreach (var interfaceType in interfaceTypes) {
+                Console.WriteLine($"Adding Repository with Interface: {repoType.Name}, {interfaceType.Name}");
+                builder.Services.AddSingleton(interfaceType, repoType);
+            }
+        }
     }
     
     private static void ConfigureJson(WebApplicationBuilder builder, IList<TypeMapping> typeMappings) {
@@ -118,6 +157,7 @@ public static class ProgramExtensions {
 
     private static Dictionary<JsonType, string> JsonTypeToName { get; } = new() {
         { JsonType.String, "string" },
+        { JsonType.Guid, "string" },
         { JsonType.Number, "number" },
         { JsonType.Boolean, "boolean" }
     };

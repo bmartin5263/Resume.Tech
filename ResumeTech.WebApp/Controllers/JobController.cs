@@ -1,6 +1,7 @@
 using Microsoft.AspNetCore.Mvc;
 using ResumeTech.Experiences.Jobs;
 using ResumeTech.Experiences.Jobs.Cqs;
+using ResumeTech.Identities.Domain;
 
 namespace ResumeTech.Application.Controllers;
 
@@ -28,9 +29,12 @@ public class JobController : ControllerBase {
     /// </summary>
     [Route("{id}")]
     [HttpGet]
-    public Task<JobDto> GetJobById(string id) {
+    public Task<JobDto> GetJobById(string id, [FromQuery] string userId) {
+        ServiceProvider.GetRequiredService<UserIdProvider>().Set(new UserId(Guid.Parse(userId)));
         return ServiceProvider.GetRequiredService<GetJobById>()
-            .Execute(new GetJobByIdRequest(Id: new JobId(Guid.Parse(id))));
+            .Execute(new GetJobByIdRequest(
+                Id: JobId.FromString(id)
+            ));
     }
     
     /// <summary>

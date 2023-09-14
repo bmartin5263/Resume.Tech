@@ -4,10 +4,10 @@ using ResumeTech.Common.Utility;
 
 namespace ResumeTech.Experiences.Contacts;
 
-public class ContactInfo : IEntity {
-    [PII(Sensitive: false)] public PersonName Name { get; set; }
-    [PII(Sensitive: false)] public Address Address { get; set; }
-    /* PII? */ public IList<Link> Links { get; private set; } = new List<Link>();
+public class ContactInfo : IEntity<ContactInfoId>, IAuditedEntity, ISoftDeletable {
+    [Pii] public PersonName Name { get; set; }
+    [Pii] public Address Address { get; set; }
+    [Pii] public IList<Link> Links { get; private set; } = new List<Link>();
 
     // Common Entity Properties
     public ContactInfoId Id { get; private set; } = ContactInfoId.Generate();

@@ -28,19 +28,6 @@ public class GuidWrapperConverter<T> : WrapperConverter<T, Guid> where T : IWrap
     }
 }
 
-public class EntityIdConverter<T> : JsonConverter<T> where T : IEntityId {
-
-    public override T? Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options) {
-        var str = reader.GetString();
-        return str == null ? default : (T) Activator.CreateInstance(typeof(T), args: str)!;
-    }
-
-    public override void Write(Utf8JsonWriter writer, T value, JsonSerializerOptions options) {
-        writer.WriteStringValue(value.Value);
-    }
-    
-}
-
 public class GenericJsonStringConverter<T> : JsonConverter<T> where T : notnull {
     private Func<T, string> ToStr { get; }
     private Func<string, T> FromStr { get; }

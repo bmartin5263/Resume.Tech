@@ -4,7 +4,7 @@ using ResumeTech.Media.Domain;
 
 namespace ResumeTech.Experiences.Projects;
 
-public class Software : IProject, IEntity {
+public class Software : IProject, IEntity<SoftwareId> {
     public ISet<ImageRefId> Images { get; private set; } = new HashSet<ImageRefId>();
     
     // Common Project Properties

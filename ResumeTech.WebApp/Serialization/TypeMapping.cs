@@ -15,14 +15,15 @@ public class TypeMapping {
     public TypeMapping(Type Source, JsonType JsonType, IOpenApiAny? ExampleValue = null, JsonConverter? JsonConverter = null) {
         this.Source = Source;
         this.JsonType = JsonType;
-        this.ExampleValue = ExampleValue ?? DefaultExampleValues[JsonType];
+        this.ExampleValue = ExampleValue ?? DefaultExampleValues[JsonType]();
         this.JsonConverter = JsonConverter;
     }
 
-    public static Dictionary<JsonType, IOpenApiAny> DefaultExampleValues { get; } = new() {
-        { JsonType.String, new OpenApiString("string") },
-        { JsonType.Number, new OpenApiInteger(0) },
-        { JsonType.Boolean, new OpenApiBoolean(false) }
+    public static Dictionary<JsonType, Func<IOpenApiAny>> DefaultExampleValues { get; } = new() {
+        { JsonType.String, () => new OpenApiString("string") },
+        { JsonType.Number, () => new OpenApiInteger(0) },
+        { JsonType.Boolean, () => new OpenApiBoolean(false) },
+        { JsonType.Guid, () => new OpenApiString(Guid.NewGuid().ToString("N")) }
     };
     
     public static Dictionary<Type, Func<object, IOpenApiAny>> CreateOpenApiValue { get; } = new() {
@@ -40,7 +41,7 @@ public class TypeMapping {
 
     public static Dictionary<Type, JsonType> JsonTypeByCsharpType { get; } = new() {
         { typeof(string), JsonType.String },
-        { typeof(Guid), JsonType.String },        
+        { typeof(Guid), JsonType.Guid },        
         { typeof(int), JsonType.Number },
         { typeof(uint), JsonType.Number },
         { typeof(long), JsonType.Number },
@@ -82,23 +83,12 @@ public class TypeMapping {
                 JsonType: jsonType,
                 ExampleValue: exampleValue != null
                     ? CreateOpenApiValue[wrapee](exampleValue)
-                    : DefaultExampleValues[jsonType],
+                    : DefaultExampleValues[jsonType](),
                 JsonConverter: (JsonConverter) Activator
                     .CreateInstance(reifiedConverterType)
                     .OrElseThrow("Failed to create Instance")
             ));
         }
-
-        // foreach (var idType in typeof(IEntityId).FindAllKnownSubtypes("ResumeTech")) {
-        //     mappings.Add(new TypeMapping(
-        //         Source: idType,
-        //         JsonType: JsonType.String,
-        //         ExampleValue: new OpenApiString(Guid.NewGuid().ToString("N")),
-        //         JsonConverter: (JsonConverter) Activator
-        //             .CreateInstance(typeof(EntityIdConverter<>).MakeGenericType(idType))
-        //             .OrElseThrow("Failed to create Instance")
-        //     ));
-        // }
         
         return mappings;
     }

@@ -2,7 +2,7 @@ using ResumeTech.Common.Domain;
 
 namespace ResumeTech.Identities.Domain;
 
-public class User : IEntity {
+public class User : IEntity<UserId>, IAuditedEntity, ISoftDeletable {
 
     // Common Entity Properties
     public UserId Id { get; private set; } = UserId.Generate();

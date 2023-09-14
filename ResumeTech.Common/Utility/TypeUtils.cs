@@ -9,10 +9,19 @@ public static class TypeUtils {
             .Where(t => type.IsAssignableFrom(t) && t is { IsAbstract: false, IsInterface: false });
     }    
     
+    public static IEnumerable<Type> GetInheritedTypes(this Type type, string assemblyName) {
+        var result = new HashSet<Type>(type.GetInterfaces());
+        if (type.BaseType != null) {
+            result.Add(type.BaseType);
+        }
+        return result;
+    }    
+    
     public static IDictionary<Type, Type> FindAllKnownGenericSubtypes(this Type genericType, string assemblyName) {
         var result = new Dictionary<Type, Type>();
-        var types = AppDomain.CurrentDomain.GetAssemblies()
-            .Where(a => a.FullName!.StartsWith(assemblyName))
+        var assemblies = AppDomain.CurrentDomain.GetAssemblies()
+            .Where(a => a.FullName!.StartsWith(assemblyName));
+        var types = assemblies
             .SelectMany(a => a.GetTypes())
             .Where(t => t is { IsAbstract: false, IsInterface: false });
         foreach (var type in types) {

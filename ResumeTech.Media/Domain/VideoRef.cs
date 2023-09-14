@@ -2,7 +2,7 @@ using ResumeTech.Common.Domain;
 
 namespace ResumeTech.Media.Domain;
 
-public class VideoRef : IEntity {
+public class VideoRef : IEntity<VideoRefId>, IAuditedEntity, ISoftDeletable {
     public Uri Location { get; private set; }
 
     // Common Entity Properties

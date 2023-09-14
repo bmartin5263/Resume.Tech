@@ -3,7 +3,7 @@ using ResumeTech.Experiences.Common;
 
 namespace ResumeTech.Experiences.Projects;
 
-public class Film : IProject, IEntity {
+public class Film : IProject, IEntity<FilmId> {
     public string Title { get; set; }
     
     // Common Project Properties

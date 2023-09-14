@@ -8,13 +8,14 @@ using ResumeTech.Identities.Domain;
 
 namespace ResumeTech.Experiences.Profiles;
 
-public class Profile : IEntity {
+public class Profile : IEntity<ProfileId>, IAuditedEntity, ISoftDeletable {
     public UserId OwnerId { get; private set; }
     
-    [Const<ContactInfo>] private IList<ContactInfo>? ContactInfos { get; set; }
-    [Const<Job>] private IList<Job>? Jobs { get; set; }
-    [Const<IProject>] private IList<IProject>? Projects { get; set; }
-    [Const<Education>] private IList<Education>? Educations { get; set; }
+    // Read-only references
+    private IList<ContactInfo>? ContactInfos { get; set; }
+    private IList<Job>? Jobs { get; set; }
+    private IList<IProject>? Projects { get; set; }
+    private IList<Education>? Educations { get; set; }
 
     // Common Entity Properties
     public ProfileId Id { get; private set; } = ProfileId.Generate();

@@ -4,7 +4,7 @@ using ResumeTech.Experiences.Contacts;
 
 namespace ResumeTech.Experiences.Educations;
 
-public class Education : IEntity {
+public class Education : IEntity<EducationId>, IAuditedEntity, ISoftDeletable {
     
     public string Name { get; set; }
 

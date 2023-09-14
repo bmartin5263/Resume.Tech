@@ -3,8 +3,8 @@ using ResumeTech.Identities.Domain;
 
 namespace ResumeTech.Experiences.Jobs;
 
-public class Job : IEntity {
-    public UserId Owner { get; private set; }
+public class Job : IEntity<JobId>, IAuditedEntity, ISoftDeletable, IOwnedEntity {
+    public UserId OwnerId { get; private set; }
     public string CompanyName { get; set; }
 
     // Common Entity Properties
@@ -19,7 +19,7 @@ public class Job : IEntity {
     }
 
     public Job(UserId Owner, string CompanyName) {
-        this.Owner = Owner;
+        this.OwnerId = Owner;
         this.CompanyName = CompanyName;
     }
 }
