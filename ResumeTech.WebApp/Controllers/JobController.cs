@@ -33,7 +33,7 @@ public class JobController : ControllerBase {
         ServiceProvider.GetRequiredService<UserIdProvider>().Set(new UserId(Guid.Parse(userId)));
         return ServiceProvider.GetRequiredService<GetJobById>()
             .Execute(new GetJobByIdRequest(
-                Id: JobId.FromString(id)
+                Id: JobId.Parse(id)
             ));
     }
     

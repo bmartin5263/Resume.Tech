@@ -22,6 +22,8 @@ Resume.Tech roughly follows Domain Driven Design principals. The overall applica
   - Handles user website building, using their Resumes and Portfolios as page content
   - Classes include: `Website`, `IPage`, `ResumePage`
 
+![Subdomains](https://github.com/bmartin5263/Resume.Tech/tree/master/Wiki/Subdomains.png)
+
 ### Object Types
 - **Entity**
   - Any business object that uses identity-based equality
