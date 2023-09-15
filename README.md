@@ -24,7 +24,9 @@ Resume.Tech roughly follows Domain Driven Design principals. The overall applica
 
 ![Subdomains](https://github.com/bmartin5263/Resume.Tech/blob/master/Wiki/Subdomains.png?raw=true)
 
-### Object Types
+### Object Categories
+All objects/values within the system fall into 1 or more of the following categories
+
 - **Entity**
   - Any business object that uses identity-based equality
   - Should use a stongly-typed id. For example, `Job` will have a `JobId`
@@ -38,7 +40,7 @@ Resume.Tech roughly follows Domain Driven Design principals. The overall applica
   - Examples: `Profile`, `Job`, `Website`
 - **Value Object**
   - Any business object that uses value-based equality
-  - Must be immutable
+  - Immutable
   - Usually a `sealed record`, but can be a `readonly record struct` when a parameterless default constructor is permissable
   - Examples: `int`, `JobId`, `DateTime`, `EmailAddress`
 - **Wrapper**
@@ -56,6 +58,7 @@ Resume.Tech roughly follows Domain Driven Design principals. The overall applica
   - Examples: `JobManager`
 - **Command**
   - A service that represents a single transactional operation that mutates the state of the application
+  - Should not invoke another command during execution
   - Examples: `CreateJob`, `PatchJob`
 - **Query**
   - A service that represents a query that can read state but not mutate it
@@ -63,6 +66,7 @@ Resume.Tech roughly follows Domain Driven Design principals. The overall applica
 - **Workflow (maybe)**
   - A service that represents a sequence of commands to be executed, each within their own DB transaction
   - If a command fails, the others should be rolled back
+    - However, if Events get published they cannot be rolled back, either need to remember to publish undo events or delay event publishing until after workflow finishes
 - **POCO**
   - Anything that doesn't follow into the above categories
   - DTOs and request objects fall into this category
