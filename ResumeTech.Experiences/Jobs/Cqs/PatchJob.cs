@@ -12,6 +12,6 @@ public class PatchJob : CqsCommand<PatchJobRequest, JobDto> {
     }
 
     public override Task<JobDto> Execute(PatchJobRequest args) {
-        return Task.FromResult(JobManager.UpdateJob(args));
+        return JobManager.UpdateJob(args);
     }
 }

@@ -25,26 +25,33 @@ public class JobController : ControllerBase {
     }
     
     /// <summary>
-    /// Create a new Job
+    /// Find a job by Id
     /// </summary>
     [Route("{id}")]
     [HttpGet]
-    public Task<JobDto> GetJobById(string id, [FromQuery] string userId) {
-        ServiceProvider.GetRequiredService<UserIdProvider>().Set(new UserId(Guid.Parse(userId)));
+    public Task<JobDto> GetJobById(string id) {
         return ServiceProvider.GetRequiredService<GetJobById>()
-            .Execute(new GetJobByIdRequest(
-                Id: JobId.Parse(id)
-            ));
+            .Execute(new GetJobByIdRequest(Id: JobId.Parse(id)));
     }
     
     /// <summary>
-    /// Create a new Job
+    /// Update a Job
     /// </summary>
-    [Route("")]
+    [Route("{id}")]
     [HttpPatch]
-    public Task<JobDto> PatchJob([FromBody] PatchJobRequest request) {
+    public Task<JobDto> PatchJob(string id, [FromBody] PatchJobRequest request) {
         return ServiceProvider.GetRequiredService<PatchJob>()
-            .Execute(request);
+            .Execute(request with {Id = JobId.Parse(id)});
     }
     
+    /// <summary>
+    /// Delete a Job
+    /// </summary>
+    [Route("{id}")]
+    [HttpDelete]
+    public Task DeleteJob(string id) {
+        return ServiceProvider.GetRequiredService<DeleteJob>()
+            .Execute(new DeleteJobRequest(Id: JobId.Parse(id)));
+    }
+
 }

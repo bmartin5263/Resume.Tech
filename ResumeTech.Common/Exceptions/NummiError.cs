@@ -31,7 +31,7 @@ public sealed record AppError {
     public AppError(Exception? CausedBy = null, AppErrorType? ErrorType = null, HttpStatusCode? StatusCode = null, string? UserMessage = null, string? DeveloperMessage = null, IList<AppSubError>? SubErrors = null) {
         this.CausedBy = CausedBy;
         this.ErrorType = ErrorType ?? AppErrorType.General;
-        this.StatusCode = StatusCode ?? HttpStatusCode.InternalServerError;
+        this.StatusCode = StatusCode ?? (UserMessage != null ? HttpStatusCode.BadRequest : HttpStatusCode.InternalServerError);
         this.UserMessage = UserMessage ??
                            (SubErrors?.Count > 0 ? null : "A system error has occurred. Please contact support@nummi.io for Technical Support");
         this.DeveloperMessage = DeveloperMessage ?? CausedBy?.Message;

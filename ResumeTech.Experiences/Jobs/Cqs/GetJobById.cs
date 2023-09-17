@@ -12,6 +12,6 @@ public class GetJobById : CqsQuery<GetJobByIdRequest, JobDto> {
     }
 
     public override Task<JobDto> Execute(GetJobByIdRequest args) {
-        return Task.FromResult(JobManager.GetJobById(args));
+        return JobManager.GetJobById(args);
     }
 }

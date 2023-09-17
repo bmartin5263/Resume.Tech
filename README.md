@@ -1,7 +1,7 @@
 # Resume.Tech
 A tool for building resumes, portfolios, and websites for your professional history
 
-## Technical Details
+## Subdomains
 
 Resume.Tech roughly follows Domain Driven Design principals. The overall application is divided into the following subdomains:
 - Identity Verification
@@ -24,7 +24,7 @@ Resume.Tech roughly follows Domain Driven Design principals. The overall applica
 
 ![Subdomains](https://github.com/bmartin5263/Resume.Tech/blob/master/Wiki/Subdomains.png?raw=true)
 
-### Object Categories
+## Object Categories
 All objects/values within the system fall into 1 or more of the following categories
 
 - **Entity**
@@ -71,3 +71,16 @@ All objects/values within the system fall into 1 or more of the following catego
   - Anything that doesn't follow into the above categories
   - DTOs and request objects fall into this category
   - Can be a `class`, `record`, or a `struct` depending on whatever makes sense for that usecase
+
+## Concepts & Idioms
+The following are various small patterns and ideas that are spread throughout the project that any new developer to the project should familiarize themselves with
+
+### Soft Deleting
+It is sometimes impractical to actually delete an entity from the database in case you need to undo the operation or want to use deleted data for analysis.
+To remedy this, entities can be soft-deletable, which when "deleted" will merely set a flag in the database saying the entity no longer exists.
+
+#### Implementation
+To mark an entity as soft-deletable, have it should implement the interface `ISoftDeletable`.
+
+Implementations of `IRepository<ID, TEntity>` should check if `TEntity` implements `ISoftDeletable` and take appropriate action.
+When soft-deleted, the entity should not be returned from any standard query method like `FindById`, `FindAll`, etc.

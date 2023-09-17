@@ -1,35 +1,38 @@
 using ResumeTech.Common.Utility;
 using ResumeTech.Identities.Domain;
+using ResumeTech.Identities.Filters;
 using ResumeTech.Identities.Util;
 
 namespace ResumeTech.Experiences.Jobs; 
 
 public class JobManager {
-    private IJobRepository JobRepository { get; }
-    private Authorizer<Job> JobAuthorizer { get; }
+    private SecureRepository<JobId, Job, IJobRepository> JobRepository { get; }
 
-    public JobManager(IJobRepository jobRepository, Authorizer<Job> jobAuthorizer) {
-        JobRepository = jobRepository;
-        JobAuthorizer = jobAuthorizer;
+    public JobManager(IJobRepository jobRepository, Authorizer<Job> authorizer) {
+        JobRepository = new SecureRepository<JobId, Job, IJobRepository>(jobRepository, authorizer);
     }
 
     public JobDto CreateJob(CreateJobRequest request) {
-        var job = new Job(Owner: request.UserId, CompanyName: request.Name);
+        var job = new Job(Owner: JobRepository.CurrentUser, CompanyName: request.Name);
         JobRepository.Add(job);
         return job.ToDto();
     }
     
-    public JobDto GetJobById(GetJobByIdRequest request) {
-        return JobRepository.FindById(request.Id)
-            .OrElseThrow(() => new ArgumentException($"Job not found by id: {request.Id}"))
-            .AssertCanRead(JobAuthorizer)
-            .ToDto();
+    public async Task<JobDto> GetJobById(GetJobByIdRequest request) {
+        var job = await JobRepository.Read(r => r.FindByIdOrThrow(request.Id));
+        return job.ToDto();
     }
     
-    public JobDto UpdateJob(PatchJobRequest request) {
-        var job = JobRepository.FindById(request.Id)
-            .OrElseThrow(() => new ArgumentException($"Job not found by id: {request.Id}"));
+    public async Task<JobDto> UpdateJob(PatchJobRequest request) {
+        var job = await JobRepository.Read(r => r.FindByIdOrThrow(request.Id));
         request.ApplyTo(job);
         return job.ToDto();
+    }
+    
+    public async Task DeleteJob(DeleteJobRequest request) {
+        var job = await JobRepository.ReadNullable(r => r.FindById(request.Id));
+        if (job != null) {
+            JobRepository.Delete(job);
+        }
     }
 }

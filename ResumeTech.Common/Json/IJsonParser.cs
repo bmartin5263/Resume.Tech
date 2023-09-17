@@ -7,6 +7,7 @@ namespace ResumeTech.Common.Json;
 public interface IJsonParser {
     private static IJsonParser? defaultParser;
 
+    // Used globally across the application, but must be initially set on startup
     public static IJsonParser Default {
         get => defaultParser.OrElseThrow("Default parser has not yet been set");
         set {

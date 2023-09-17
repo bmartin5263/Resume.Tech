@@ -4,13 +4,10 @@ using ResumeTech.Identities.Exceptions;
 
 namespace ResumeTech.Identities.Filters; 
 
-public class IsAnOwnerFilter<TEntity> : IAccessFilter<TEntity> where TEntity : IMultiOwnedEntity {
+public class IsAnOwnerFilter<TEntity> : IAccessFilter<TEntity> where TEntity : class, IMultiOwnedEntity {
     
-    public bool CheckCanRead(UserId userId, TEntity entity) {
-        return entity.OwnerIds.Contains(userId);
+    public Task<bool> CheckCanRead(UserId userId, TEntity entity) {
+        return Task.FromResult(entity.OwnerIds.Contains(userId));
     }
-
-    public bool CheckCanWrite(UserId userId, TEntity entity) {
-        return CheckCanRead(userId, entity);
-    }
+    
 }
