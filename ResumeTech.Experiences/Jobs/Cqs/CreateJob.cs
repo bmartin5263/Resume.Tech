@@ -1,4 +1,4 @@
-using ResumeTech.Common.Cqs.Commands;
+using ResumeTech.Cqs;
 
 namespace ResumeTech.Experiences.Jobs.Cqs;
 

@@ -4,7 +4,7 @@ using ResumeTech.Experiences.Contacts;
 using ResumeTech.Experiences.Educations;
 using ResumeTech.Experiences.Jobs;
 using ResumeTech.Experiences.Projects;
-using ResumeTech.Identities.Domain;
+using ResumeTech.Identities.Users;
 
 namespace ResumeTech.Experiences.Profiles;
 

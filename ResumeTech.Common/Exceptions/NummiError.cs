@@ -5,12 +5,6 @@ using static System.Text.Json.Serialization.JsonIgnoreCondition;
 
 namespace ResumeTech.Common.Exceptions;
 
-public enum AppErrorType {
-    General,
-    AuthenticationFailed,
-    ValidationFailed
-}
-
 public enum AppSubErrorType {
     DataMissing,
     DataInvalid
@@ -20,7 +14,6 @@ public sealed record AppSubError(string Path, string Message);
 
 public sealed record AppError {
     public Exception? CausedBy { get; }
-    public AppErrorType ErrorType { get; }
     public HttpStatusCode StatusCode { get; }
     public string? UserMessage { get; }
     public string? DeveloperMessage { get; }
@@ -28,12 +21,11 @@ public sealed record AppError {
 
     public bool IsUserError => (int)StatusCode >= 400 && (int)StatusCode <= 499;
 
-    public AppError(Exception? CausedBy = null, AppErrorType? ErrorType = null, HttpStatusCode? StatusCode = null, string? UserMessage = null, string? DeveloperMessage = null, IList<AppSubError>? SubErrors = null) {
+    public AppError(Exception? CausedBy = null, HttpStatusCode? StatusCode = null, string? UserMessage = null, string? DeveloperMessage = null, IList<AppSubError>? SubErrors = null) {
         this.CausedBy = CausedBy;
-        this.ErrorType = ErrorType ?? AppErrorType.General;
         this.StatusCode = StatusCode ?? (UserMessage != null ? HttpStatusCode.BadRequest : HttpStatusCode.InternalServerError);
         this.UserMessage = UserMessage ??
-                           (SubErrors?.Count > 0 ? null : "A system error has occurred. Please contact support@nummi.io for Technical Support");
+                           (SubErrors?.Count > 0 ? null : "A system error has occurred. Please contact support@User.io for Technical Support");
         this.DeveloperMessage = DeveloperMessage ?? CausedBy?.Message;
         this.SubErrors = SubErrors ?? ImmutableList<AppSubError>.Empty;
     }
@@ -41,7 +33,6 @@ public sealed record AppError {
     public AppErrorDto ToDto(string traceId, bool includeDevInfo) {
         return new AppErrorDto(
             CausedBy: includeDevInfo ? CausedBy?.GetType().Name : null,
-            ErrorType: Enum.GetName(typeof(AppErrorType), ErrorType),
             UserMessage: UserMessage,
             DeveloperMessage: includeDevInfo ? DeveloperMessage : null,
             SubErrors: SubErrors.Count == 0 ? null : SubErrors.Select(e => new AppSubErrorDto(
@@ -56,16 +47,10 @@ public sealed record AppError {
         return new AppErrorBuilder()
             .StatusCode(statusCode);
     }
-    
-    public static AppErrorBuilder Builder(AppErrorType errorType) {
-        return new AppErrorBuilder()
-            .ErrorType(errorType);
-    }
 }
 
 public class AppErrorBuilder {
     private Exception? _causedBy;
-    private AppErrorType _errorType;
     private HttpStatusCode _statusCode;
     private string? _userMessage;
     private string? _developerMessage;
@@ -75,12 +60,7 @@ public class AppErrorBuilder {
         _causedBy = exception;
         return this;
     }
-    
-    public AppErrorBuilder ErrorType(AppErrorType errorType) {
-        _errorType = errorType;
-        return this;
-    }
-    
+
     public AppErrorBuilder StatusCode(HttpStatusCode statusCode) {
         _statusCode = statusCode;
         return this;
@@ -117,7 +97,6 @@ public class AppErrorBuilder {
     public AppError Build() {
         return new AppError(
             CausedBy: _causedBy,
-            ErrorType: _errorType,
             StatusCode: _statusCode,
             UserMessage: _userMessage,
             DeveloperMessage: _developerMessage,

@@ -23,7 +23,7 @@ public static class Errors {
             .DeveloperMessage($"Missing {typeof(T).Name} with id {id}. {message}");
     }
     
-    public static AppErrorBuilder Unauthorized(string message = "Login failed. Reset password at https://nummi.io/reset-password") {
+    public static AppErrorBuilder Unauthorized(string message = "Login failed. Reset password at https://User.io/reset-password") {
         return Builder(HttpStatusCode.Unauthorized)
             .UserMessage(message);
     }

@@ -1,4 +1,4 @@
-using ResumeTech.Identities.Domain;
+using ResumeTech.Identities.Users;
 
 namespace ResumeTech.Experiences.Jobs; 
 

@@ -1,7 +1,5 @@
 using ResumeTech.Common.Utility;
-using ResumeTech.Identities.Domain;
-using ResumeTech.Identities.Filters;
-using ResumeTech.Identities.Util;
+using ResumeTech.Identities.Auth;
 
 namespace ResumeTech.Experiences.Jobs; 
 
@@ -13,7 +11,7 @@ public class JobManager {
     }
 
     public JobDto CreateJob(CreateJobRequest request) {
-        var job = new Job(Owner: JobRepository.CurrentUser, CompanyName: request.Name);
+        var job = new Job(OwnerId: JobRepository.CurrentUser.Id!.Value, CompanyName: request.Name);
         JobRepository.Add(job);
         return job.ToDto();
     }
@@ -33,6 +31,13 @@ public class JobManager {
         var job = await JobRepository.ReadNullable(r => r.FindById(request.Id));
         if (job != null) {
             JobRepository.Delete(job);
+        }
+    }
+    
+    public async Task PurgeJob(DeleteJobRequest request) {
+        var job = await JobRepository.ReadNullable(r => r.FindById(request.Id));
+        if (job != null) {
+            JobRepository.Purge(job);
         }
     }
 }

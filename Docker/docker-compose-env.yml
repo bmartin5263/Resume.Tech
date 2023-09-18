@@ -1,0 +1,17 @@
+version: '3.8'
+services:
+  resumeTechDb:
+    container_name: resumeTechDb
+    image: postgres:15.3
+    restart: always
+    environment:
+      - POSTGRES_USER=resumetech
+      - POSTGRES_PASSWORD=resumetech
+      - POSTGRES_DB=resumetechdb
+    ports:
+      - '5432:5432'
+    volumes:
+      - resume-tech-pg:/var/lib/postgresql/data
+volumes:
+  resume-tech-pg:
+    driver: local

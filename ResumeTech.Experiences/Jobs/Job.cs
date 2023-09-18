@@ -1,5 +1,6 @@
 using ResumeTech.Common.Domain;
-using ResumeTech.Identities.Domain;
+using ResumeTech.Identities.Auth;
+using ResumeTech.Identities.Users;
 
 namespace ResumeTech.Experiences.Jobs;
 
@@ -9,7 +10,7 @@ public class Job : IEntity<JobId>, IAuditedEntity, ISoftDeletable, IOwnedEntity 
 
     // Common Entity Properties
     public JobId Id { get; private set; } = JobId.Generate();
-    public DateTimeOffset CreatedAt { get; set; } = DateTimeOffset.UtcNow;
+    public DateTimeOffset CreatedAt { get; set; }
     public DateTimeOffset? UpdatedAt { get; set; }
     public DateTimeOffset? DeletedAt { get; set; }
 
@@ -18,8 +19,8 @@ public class Job : IEntity<JobId>, IAuditedEntity, ISoftDeletable, IOwnedEntity 
         CompanyName = null!;
     }
 
-    public Job(UserId Owner, string CompanyName) {
-        this.OwnerId = Owner;
+    public Job(UserId OwnerId, string CompanyName) {
+        this.OwnerId = OwnerId;
         this.CompanyName = CompanyName;
     }
 }

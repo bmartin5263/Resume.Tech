@@ -12,6 +12,10 @@ public static class ReadOnly {
     public static IReadOnlySet<T> Set<T>() {
         return new ReadOnlySet<T>(new HashSet<T>()); // avoid allocation?
     }
+    
+    public static IReadOnlySet<T> SetOf<T>(params T[] items) {
+        return new ReadOnlySet<T>(items.ToImmutableHashSet()); // avoid allocation?
+    }
 
     public static IReadOnlySet<T> AsReadOnly<T>(this ISet<T> self) {
         return new ReadOnlySet<T>(self); // avoid allocation?

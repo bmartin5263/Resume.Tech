@@ -9,6 +9,7 @@
 
     <ItemGroup>
       <ProjectReference Include="..\ResumeTech.Common\ResumeTech.Common.csproj" />
+      <ProjectReference Include="..\ResumeTech.Cqs\ResumeTech.Cqs.csproj" />
       <ProjectReference Include="..\ResumeTech.Identities\ResumeTech.Identities.csproj" />
       <ProjectReference Include="..\ResumeTech.Media\ResumeTech.Media.csproj" />
     </ItemGroup>

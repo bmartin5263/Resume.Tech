@@ -1,3 +1,5 @@
+using ResumeTech.Common.Exceptions;
+
 namespace ResumeTech.Common.Utility; 
 
 public static class TypeUtils {
@@ -29,6 +31,25 @@ public static class TypeUtils {
             if (reifiedGenericType != null) {
                 result[type] = reifiedGenericType;
             }
+        }
+
+        return result;
+    }
+    
+    public static IDictionary<Type, ISet<Type>> FindAllKnownGenericSubtypes2(this Type genericType, string assemblyName) {
+        IDictionary<Type, ISet<Type>> result = new Dictionary<Type, ISet<Type>>();
+        IDictionary<Type, Type> repoTypes = genericType.FindAllKnownGenericSubtypes(assemblyName);
+        foreach (var (repoType, interfaceType) in repoTypes) {
+            if (result.ContainsKey(repoType)) {
+                throw new AppException("Found duplicate repository types");
+            }
+
+            var superTypes = repoType.GetInterfaces().ToHashSet();
+            if (repoType.BaseType != null) {
+                superTypes.Add(repoType.BaseType);
+            }
+
+            result[repoType] = superTypes.Where(t => typeof(object) != t).ToHashSet();
         }
 
         return result;

@@ -1,6 +1,8 @@
 using System.Reflection;
 using ResumeTech.Application.Middleware;
+using ResumeTech.Application.Options;
 using ResumeTech.Application.Serialization;
+using ResumeTech.Application.Util;
 
 namespace ResumeTech.Application;
 
@@ -16,10 +18,16 @@ internal class Program {
         AppDomain.CurrentDomain.Load(new AssemblyName("ResumeTech.Experiences"));
 
         var builder = WebApplication.CreateBuilder(args);
+        var userOptions = builder.BindOptions<UserOptions>("User");
+        var securityOptions = builder.BindOptions<SecurityOptions>("Security");
+        var databaseOptions = builder.BindOptions<DatabaseOptions>("Database");
         var mappedTypes = TypeMapping.GenerateTypeMappings();
 
         builder.ConfigureJson(mappedTypes);
+        builder.ConfigureDatabase(databaseOptions);
         builder.ConfigureSwagger(mappedTypes);
+        builder.ConfigureAuthentication(userOptions, securityOptions);
+        builder.ConfigureCors();
 
         builder.AutoAddServices();
         builder.ManuallyAddServices();
@@ -36,6 +44,10 @@ internal class Program {
         app.UseMiddleware<SetUserMiddleware>();
         app.UseAuthorization();
         app.MapControllers();
+
+        if (builder.Environment.EnvironmentName != "Test") {
+            app.MigrateDb();
+        }
 
         app.Run();
     }

@@ -1,4 +1,4 @@
-using ResumeTech.Common.Cqs.Commands;
+using ResumeTech.Common.Utility;
 
 namespace ResumeTech.Common.Events; 
 

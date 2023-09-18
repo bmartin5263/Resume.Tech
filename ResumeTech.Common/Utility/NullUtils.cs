@@ -24,9 +24,9 @@ public static class NullUtils {
         return self;
     }
 
-    public static T OrElseThrow<T>(this T? obj, string? DeveloperMessage = null, Exception? CausedBy = null, AppErrorType? ErrorType = null, HttpStatusCode? StatusCode = null, string? UserMessage = null, IList<AppSubError>? SubErrors = null) {
+    public static T OrElseThrow<T>(this T? obj, string? DeveloperMessage = null, Exception? CausedBy = null, HttpStatusCode? StatusCode = null, string? UserMessage = null, IList<AppSubError>? SubErrors = null) {
         if (obj == null) {
-            throw new AppException(new AppError(CausedBy, ErrorType, StatusCode, UserMessage, DeveloperMessage, SubErrors));
+            throw new AppException(new AppError(CausedBy, StatusCode, UserMessage, DeveloperMessage, SubErrors));
         }
         return obj;
     }

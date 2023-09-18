@@ -1,17 +1,21 @@
 using Microsoft.AspNetCore.Mvc;
+using ResumeTech.Common.Service;
+using ResumeTech.Cqs;
 using ResumeTech.Experiences.Jobs;
 using ResumeTech.Experiences.Jobs.Cqs;
-using ResumeTech.Identities.Domain;
+using ResumeTech.Identities.Users;
 
 namespace ResumeTech.Application.Controllers;
 
 [ApiController]
 [Route("jobs")]
 public class JobController : ControllerBase {
-    private IServiceProvider ServiceProvider { get; }
+    private IScope Scope { get; }
+    private Exec Exec { get; }
 
-    public JobController(IServiceProvider serviceProvider) {
-        ServiceProvider = serviceProvider;
+    public JobController(IScope appServiceProvider, Exec exec) {
+        Scope = appServiceProvider;
+        Exec = exec;
     }
 
     /// <summary>
@@ -20,8 +24,7 @@ public class JobController : ControllerBase {
     [Route("")]
     [HttpPost]
     public Task<JobDto> CreateJob([FromBody] CreateJobRequest request) {
-        return ServiceProvider.GetRequiredService<CreateJob>()
-            .Execute(request);
+        return Exec.Command(Scope.GetService<CreateJob>(), request, UserDetails.NotLoggedIn);
     }
     
     /// <summary>
@@ -30,8 +33,7 @@ public class JobController : ControllerBase {
     [Route("{id}")]
     [HttpGet]
     public Task<JobDto> GetJobById(string id) {
-        return ServiceProvider.GetRequiredService<GetJobById>()
-            .Execute(new GetJobByIdRequest(Id: JobId.Parse(id)));
+        return Exec.Query(Scope.GetService<GetJobById>(), new GetJobByIdRequest(Id: JobId.Parse(id)), UserDetails.NotLoggedIn);
     }
     
     /// <summary>
@@ -40,8 +42,7 @@ public class JobController : ControllerBase {
     [Route("{id}")]
     [HttpPatch]
     public Task<JobDto> PatchJob(string id, [FromBody] PatchJobRequest request) {
-        return ServiceProvider.GetRequiredService<PatchJob>()
-            .Execute(request with {Id = JobId.Parse(id)});
+        return Exec.Command(Scope.GetService<PatchJob>(), request with {Id = JobId.Parse(id)}, UserDetails.NotLoggedIn);
     }
     
     /// <summary>
@@ -50,8 +51,7 @@ public class JobController : ControllerBase {
     [Route("{id}")]
     [HttpDelete]
     public Task DeleteJob(string id) {
-        return ServiceProvider.GetRequiredService<DeleteJob>()
-            .Execute(new DeleteJobRequest(Id: JobId.Parse(id)));
+        return Exec.Command(Scope.GetService<DeleteJob>(), new DeleteJobRequest(Id: JobId.Parse(id)), UserDetails.NotLoggedIn);
     }
 
 }
