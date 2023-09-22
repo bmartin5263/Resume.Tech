@@ -22,4 +22,5 @@ public interface IJsonParser {
     public T? Read<T>(string json);
     public T ReadOrElse<T>(string json, T defaultValue);
     public string Write(object? obj);
+    public Task WriteAsync<T>(Stream stream, T value);
 }

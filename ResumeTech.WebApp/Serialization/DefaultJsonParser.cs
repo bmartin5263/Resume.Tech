@@ -1,9 +1,5 @@
 using System.Text.Json;
-using System.Text.Json.Nodes;
-using System.Text.Json.Serialization;
-using ResumeTech.Common.Domain;
 using ResumeTech.Common.Json;
-using ResumeTech.Common.Utility;
 
 namespace ResumeTech.Application.Serialization; 
 
@@ -25,5 +21,9 @@ public class DefaultJsonParser : IJsonParser {
 
     public string Write(object? obj) {
         return obj == null ? "null" : JsonSerializer.Serialize(obj, Options);
+    }
+
+    public Task WriteAsync<T>(Stream stream, T value) {
+        return JsonSerializer.SerializeAsync(stream, value, Options);
     }
 }

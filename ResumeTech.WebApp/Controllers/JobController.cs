@@ -1,20 +1,18 @@
 using Microsoft.AspNetCore.Mvc;
-using ResumeTech.Common.Service;
-using ResumeTech.Cqs;
+using ResumeTech.Common.Cqs;
 using ResumeTech.Experiences.Jobs;
 using ResumeTech.Experiences.Jobs.Cqs;
-using ResumeTech.Identities.Users;
 
 namespace ResumeTech.Application.Controllers;
 
 [ApiController]
 [Route("jobs")]
 public class JobController : ControllerBase {
-    private IScope Scope { get; }
+    private IUnitOfWork UnitOfWork { get; }
     private Exec Exec { get; }
 
-    public JobController(IScope appServiceProvider, Exec exec) {
-        Scope = appServiceProvider;
+    public JobController(IUnitOfWork appServiceProvider, Exec exec) {
+        UnitOfWork = appServiceProvider;
         Exec = exec;
     }
 
@@ -24,7 +22,7 @@ public class JobController : ControllerBase {
     [Route("")]
     [HttpPost]
     public Task<JobDto> CreateJob([FromBody] CreateJobRequest request) {
-        return Exec.Command(Scope.GetService<CreateJob>(), request, UserDetails.NotLoggedIn);
+        return Exec.Command(UnitOfWork.GetService<CreateJob>(), request);
     }
     
     /// <summary>
@@ -33,7 +31,7 @@ public class JobController : ControllerBase {
     [Route("{id}")]
     [HttpGet]
     public Task<JobDto> GetJobById(string id) {
-        return Exec.Query(Scope.GetService<GetJobById>(), new GetJobByIdRequest(Id: JobId.Parse(id)), UserDetails.NotLoggedIn);
+        return Exec.Query(UnitOfWork.GetService<GetJobById>(), new GetJobByIdRequest(Id: JobId.Parse(id)));
     }
     
     /// <summary>
@@ -42,7 +40,7 @@ public class JobController : ControllerBase {
     [Route("{id}")]
     [HttpPatch]
     public Task<JobDto> PatchJob(string id, [FromBody] PatchJobRequest request) {
-        return Exec.Command(Scope.GetService<PatchJob>(), request with {Id = JobId.Parse(id)}, UserDetails.NotLoggedIn);
+        return Exec.Command(UnitOfWork.GetService<PatchJob>(), request with {Id = JobId.Parse(id)});
     }
     
     /// <summary>
@@ -51,7 +49,7 @@ public class JobController : ControllerBase {
     [Route("{id}")]
     [HttpDelete]
     public Task DeleteJob(string id) {
-        return Exec.Command(Scope.GetService<DeleteJob>(), new DeleteJobRequest(Id: JobId.Parse(id)), UserDetails.NotLoggedIn);
+        return Exec.Command(UnitOfWork.GetService<DeleteJob>(), new DeleteJobRequest(Id: JobId.Parse(id)));
     }
 
 }

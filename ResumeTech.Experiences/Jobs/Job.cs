@@ -1,6 +1,6 @@
+using ResumeTech.Common.Auth;
 using ResumeTech.Common.Domain;
 using ResumeTech.Identities.Auth;
-using ResumeTech.Identities.Users;
 
 namespace ResumeTech.Experiences.Jobs;
 

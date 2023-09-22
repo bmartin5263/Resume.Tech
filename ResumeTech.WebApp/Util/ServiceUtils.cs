@@ -1,10 +1,10 @@
-using ResumeTech.Common.Service;
+using ResumeTech.Common.Auth;
+using ResumeTech.Common.Cqs;
+using ResumeTech.Common.Events;
 using ResumeTech.Common.Utility;
-using ResumeTech.Cqs;
 using ResumeTech.Experiences.Jobs;
 using ResumeTech.Identities.Auth;
 using ResumeTech.Identities.Auth.Filters;
-using ResumeTech.Persistence.EntityFramework;
 
 namespace ResumeTech.Application.Util; 
 
@@ -39,15 +39,18 @@ public static class ServiceUtils {
     }
 
     public static void ManuallyAddServices(this WebApplicationBuilder builder) {
+        builder.Services.AddSingleton<IUnitOfWorkFactory, UnitOfWorkFactory>();
+        builder.Services.AddSingleton<IEventDispatcher, EventDispatcher>();
+        
         builder.Services.AddScoped<JobManager>();
-        builder.Services.AddScoped<IUnitOfWork, EfCoreUnitOfWork>();
+        builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
         builder.Services.AddScoped<Exec>();
-        builder.Services.AddScoped<IdentityProvider>();
+        builder.Services.AddScoped<IUserDetailsProvider, UserDetailsProvider>();
         builder.Services.AddScoped<Authorizer<Job>>(s => new Authorizer<Job>(
             Filters: new List<IAccessFilter<Job>> {
                 new IsOwnerFilter<Job>()
             },
-            IdentityProvider: s.GetRequiredService<IdentityProvider>()
+            UserDetailsProvider: s.GetRequiredService<IUserDetailsProvider>()
         ));
     }
 }

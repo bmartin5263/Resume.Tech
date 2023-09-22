@@ -3,10 +3,11 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.IdentityModel.Tokens;
 using ResumeTech.Application.Middleware;
-using ResumeTech.Application.Options;
+using ResumeTech.Common.Options;
 using ResumeTech.Common.Utility;
 using ResumeTech.Identities.Duende;
 using ResumeTech.Persistence.EntityFramework;
+using UserOptions = ResumeTech.Common.Options.UserOptions;
 
 namespace ResumeTech.Application.Util; 
 
@@ -15,7 +16,7 @@ public static class AuthenticationUtils {
 
     public static void ConfigureAuthentication(
         this WebApplicationBuilder builder, 
-        Options.UserOptions userOptions,
+        UserOptions userOptions,
         SecurityOptions securityOptions
     ) {
         builder.Services.AddDefaultIdentity<User>(options => {

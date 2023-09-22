@@ -4,12 +4,11 @@ using Duende.IdentityServer.EntityFramework.Interfaces;
 using Duende.IdentityServer.EntityFramework.Options;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.ChangeTracking;
-using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Microsoft.Extensions.Options;
+using ResumeTech.Common.Auth;
 using ResumeTech.Common.Domain;
+using ResumeTech.Experiences.Jobs;
 using ResumeTech.Identities.Duende;
-using ResumeTech.Identities.Users;
 using ResumeTech.Persistence.EntityFramework.Converter;
 using UserClaim = ResumeTech.Identities.Duende.UserClaim;
 
@@ -43,6 +42,8 @@ public class EFCoreContext :
         builder.Entity<UserLogin>().ToTable("UserLogin");
         builder.Entity<UserRole>().ToTable("UserRole");
         builder.Entity<UserToken>().ToTable("UserToken");
+        
+        builder.DefineTable<Job>();
     }
     
     protected override void ConfigureConventions(ModelConfigurationBuilder builder) {

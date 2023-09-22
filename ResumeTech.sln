@@ -16,8 +16,6 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ResumeTech.Persistence.Enti
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ResumeTech.Identities.Duende", "ResumeTech.Identities.Duende\ResumeTech.Identities.Duende.csproj", "{C5E00F15-3EC2-4163-B411-22CC1519CF84}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ResumeTech.Cqs", "ResumeTech.Cqs\ResumeTech.Cqs.csproj", "{905927C8-F228-4D11-9721-FD2134AC8EAA}"
-EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ResumeTech.Common.UnitTest", "ResumeTech.Common.UnitTest\ResumeTech.Common.UnitTest.csproj", "{4C290B67-AD20-4610-9AD5-DEE3A3C96599}"
 EndProject
 Global
@@ -58,10 +56,6 @@ Global
 		{C5E00F15-3EC2-4163-B411-22CC1519CF84}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{C5E00F15-3EC2-4163-B411-22CC1519CF84}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{C5E00F15-3EC2-4163-B411-22CC1519CF84}.Release|Any CPU.Build.0 = Release|Any CPU
-		{905927C8-F228-4D11-9721-FD2134AC8EAA}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{905927C8-F228-4D11-9721-FD2134AC8EAA}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{905927C8-F228-4D11-9721-FD2134AC8EAA}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{905927C8-F228-4D11-9721-FD2134AC8EAA}.Release|Any CPU.Build.0 = Release|Any CPU
 		{4C290B67-AD20-4610-9AD5-DEE3A3C96599}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{4C290B67-AD20-4610-9AD5-DEE3A3C96599}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{4C290B67-AD20-4610-9AD5-DEE3A3C96599}.Release|Any CPU.ActiveCfg = Release|Any CPU

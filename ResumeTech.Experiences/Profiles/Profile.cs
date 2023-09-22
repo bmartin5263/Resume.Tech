@@ -1,10 +1,9 @@
-using ResumeTech.Common.Attributes;
+using ResumeTech.Common.Auth;
 using ResumeTech.Common.Domain;
 using ResumeTech.Experiences.Contacts;
 using ResumeTech.Experiences.Educations;
 using ResumeTech.Experiences.Jobs;
 using ResumeTech.Experiences.Projects;
-using ResumeTech.Identities.Users;
 
 namespace ResumeTech.Experiences.Profiles;
 

@@ -1,6 +1,4 @@
-using NLog;
-using ResumeTech.Common.Utility;
-using ResumeTech.Identities.Auth;
+using ResumeTech.Common.Auth;
 using ResumeTech.Identities.Users;
 
 namespace ResumeTech.Application.Middleware; 
@@ -12,15 +10,19 @@ public class SetUserMiddleware {
         Next = next;
     }
 
-    public async Task InvokeAsync(HttpContext context) {
+    public async Task InvokeAsync(HttpContext context, IUserDetailsProvider userDetailsProvider) {
+        Console.WriteLine("Setting User...");
         if (context.Request.Headers.TryGetValue("UserId", out var userId)) {
             try {
-                context.RequestServices.GetRequiredService<IdentityProvider>()
-                    .Set(new UserDetails(Id: UserId.Parse(userId[0]!), Roles: null));
+                userDetailsProvider.Set(new UserDetails(Id: UserId.Parse(userId[0]!), Roles: null));
             }
-            catch (Exception) {
-                // ignore
+            catch (Exception e) {
+                Console.WriteLine(e);
+                userDetailsProvider.Set(new UserDetails(Id: null, Roles: null));
             }
+        }
+        else {
+            userDetailsProvider.Set(new UserDetails(Id: null, Roles: null));
         }
         await Next(context);
     }

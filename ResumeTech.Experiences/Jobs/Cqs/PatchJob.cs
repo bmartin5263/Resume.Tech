@@ -1,4 +1,4 @@
-using ResumeTech.Cqs;
+using ResumeTech.Common.Cqs;
 
 namespace ResumeTech.Experiences.Jobs.Cqs;
 
@@ -9,6 +9,7 @@ public class PatchJob : CqsCommand<PatchJobRequest, JobDto> {
 
     public PatchJob(JobManager jobManager) {
         JobManager = jobManager;
+        Console.WriteLine("New PatchJob");
     }
 
     public override Task<JobDto> Execute(PatchJobRequest args) {

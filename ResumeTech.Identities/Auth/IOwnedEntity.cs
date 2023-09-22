@@ -1,4 +1,4 @@
-using ResumeTech.Identities.Users;
+using ResumeTech.Common.Auth;
 
 namespace ResumeTech.Identities.Auth; 
 

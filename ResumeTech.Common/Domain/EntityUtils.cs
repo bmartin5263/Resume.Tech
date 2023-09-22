@@ -1,5 +1,3 @@
-using ResumeTech.Common.Utility;
-
 namespace ResumeTech.Common.Domain;
 
 public static class EntityUtils {

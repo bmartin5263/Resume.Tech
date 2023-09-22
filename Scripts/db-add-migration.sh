@@ -6,5 +6,5 @@ dotnet ef migrations add \
   --startup-project ResumeTech.WebApp/ResumeTech.WebApp.csproj \
   --context ResumeTech.Persistence.EntityFramework.EFCoreContext \
   --configuration Debug "$1" \
-  --output-dir Database/Migrations -- \
+  --output-dir Migrations -- \
   --environment Local

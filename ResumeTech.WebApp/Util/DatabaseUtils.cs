@@ -1,6 +1,6 @@
 using System.Reflection;
 using Microsoft.EntityFrameworkCore;
-using ResumeTech.Application.Options;
+using ResumeTech.Common.Options;
 using ResumeTech.Common.Repository;
 using ResumeTech.Persistence.EntityFramework;
 

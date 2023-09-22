@@ -1,3 +1,4 @@
+using ResumeTech.Common.Auth;
 using ResumeTech.Identities.Auth.Filters;
 using ResumeTech.Identities.Users;
 
@@ -5,12 +6,12 @@ namespace ResumeTech.Identities.Auth;
 
 public class Authorizer<TEntity> where TEntity : class {
     private IList<IAccessFilter<TEntity>> Filters { get; }
-    private IdentityProvider IdentityProvider { get; }
-    public UserDetails CurrentUser => IdentityProvider.CurrentUser;
+    private IUserDetailsProvider UserDetailsProvider { get; }
+    public UserDetails CurrentUser => UserDetailsProvider.CurrentUser;
 
-    public Authorizer(IList<IAccessFilter<TEntity>> Filters, IdentityProvider IdentityProvider) {
+    public Authorizer(IList<IAccessFilter<TEntity>> Filters, IUserDetailsProvider UserDetailsProvider) {
         this.Filters = Filters;
-        this.IdentityProvider = IdentityProvider;
+        this.UserDetailsProvider = UserDetailsProvider;
     }
 
     public async Task<TEntity> AssertCanRead(TEntity entity) {
@@ -22,7 +23,7 @@ public class Authorizer<TEntity> where TEntity : class {
     
 
     public async Task<bool> CanRead(TEntity entity) {
-        var userId = IdentityProvider.CurrentUser.Id;
+        var userId = UserDetailsProvider.CurrentUser.Id;
         if (userId == null) {
             throw new AccessDeniedException();
         }

@@ -2,17 +2,15 @@ using Microsoft.EntityFrameworkCore;
 using ResumeTech.Common.Domain;
 using ResumeTech.Common.Repository;
 using ResumeTech.Common.Utility;
-using ResumeTech.Cqs;
 
 namespace ResumeTech.Persistence.EntityFramework; 
 
 public abstract class GenericRepository<ID, TEntity> : IRepository<ID, TEntity> where ID : IEntityId where TEntity : class, IEntity<ID> {
-    protected IUnitOfWork UnitOfWork { get; }
-    protected EFCoreContext Context => (UnitOfWork.DbContext as EFCoreContext)!;
+    protected EFCoreContext Context { get; }
     protected DbSet<TEntity> Entities => Context.Set<TEntity>();
 
-    public GenericRepository(IUnitOfWork unitOfWork) {
-        UnitOfWork = unitOfWork;
+    public GenericRepository(EFCoreContext context) {
+        Context = context;
     }
 
     public virtual async Task<TEntity?> FindById(ID id) {

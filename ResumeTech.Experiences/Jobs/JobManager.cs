@@ -1,4 +1,4 @@
-using ResumeTech.Common.Utility;
+using ResumeTech.Common.Auth;
 using ResumeTech.Identities.Auth;
 
 namespace ResumeTech.Experiences.Jobs; 
@@ -11,7 +11,7 @@ public class JobManager {
     }
 
     public JobDto CreateJob(CreateJobRequest request) {
-        var job = new Job(OwnerId: JobRepository.CurrentUser.Id!.Value, CompanyName: request.Name);
+        var job = new Job(OwnerId: UserId.Generate(), CompanyName: request.Name);
         JobRepository.Add(job);
         return job.ToDto();
     }
