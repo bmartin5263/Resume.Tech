@@ -6,6 +6,5 @@ public interface IUnitOfWork {
     Task<ICollection<IDomainEvent>> Commit();
     void RaiseEvent(IDomainEvent domainEvent);
     T GetService<T>() where T : notnull;
-    
-    
+    object GetService(Type type);
 }

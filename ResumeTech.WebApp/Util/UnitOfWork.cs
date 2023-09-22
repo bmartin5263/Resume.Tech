@@ -33,6 +33,10 @@ public sealed class UnitOfWork : IUnitOfWork {
         return ServiceProvider.GetRequiredService<T>();
     }
 
+    public object GetService(Type type) {
+        return ServiceProvider.GetRequiredService(type);
+    }
+
     public async Task<ICollection<IDomainEvent>> Commit() {
         if (Committed) {
             return Events;

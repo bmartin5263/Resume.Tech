@@ -3,21 +3,17 @@ using Microsoft.AspNetCore.Diagnostics;
 using ResumeTech.Common.Auth;
 using ResumeTech.Common.Exceptions;
 using ResumeTech.Common.Json;
+using ResumeTech.Common.Utility;
 
 namespace ResumeTech.Application.Middleware; 
 
 public class JsonExceptionMiddleware {
     private bool IsTestEnvironment { get; }
-    private ILogger<JsonExceptionMiddleware> Logger { get; }
+    private ILogger Logger { get; }
 
     public JsonExceptionMiddleware(bool isTestEnvironment) {
         IsTestEnvironment = isTestEnvironment;
-        
-        var factory = LoggerFactory.Create(builder => {
-            builder.AddConsole();
-        });
-
-        Logger = factory.CreateLogger<JsonExceptionMiddleware>();
+        Logger = Logging.CreateLogger<JsonExceptionMiddleware>();
     }
 
     public async Task Invoke(HttpContext context) {
@@ -48,7 +44,7 @@ public class JsonExceptionMiddleware {
             // Notify Admin
         }
         else {
-            message = cause?.Message ?? error.DeveloperMessage ?? error.UserMessage;
+            message = error.DeveloperMessage ?? cause?.Message ?? error.UserMessage;
         }
         
         if (message != null) {

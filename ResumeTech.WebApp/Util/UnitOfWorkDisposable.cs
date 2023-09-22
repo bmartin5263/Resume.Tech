@@ -38,6 +38,13 @@ public sealed class UnitOfWorkDisposable : IUnitOfWorkDisposable {
         return UnitOfWork.GetService<T>();
     }
 
+    public object GetService(Type type) {
+        if (Disposed) {
+            throw new AppException("Cannot get service on a disposed Unit of Work");
+        }
+        return UnitOfWork.GetService(type);
+    }
+
     public void Dispose() {
         Scope.Dispose();
         Disposed = true;

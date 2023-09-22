@@ -3,9 +3,8 @@ using ResumeTech.Common.Domain;
 
 namespace ResumeTech.Identities.Users; 
 
-public record CreateUserRequest(
+public sealed record CreateUserRequest(
     UserId Id,
-    DateTimeOffset CreatedAt,
     string Username,
     string Password,
     EmailAddress Email,

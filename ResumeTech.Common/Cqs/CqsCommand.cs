@@ -4,10 +4,10 @@ using ResumeTech.Common.Utility;
 
 namespace ResumeTech.Common.Cqs;
 
-public abstract class CqsCommand {
+public abstract class CqsCommand : IAction<object?, object?> {
     public abstract string Name { get; }
     public virtual LogPolicy LogPolicy => LogPolicy.IncludeArguments;
-    public virtual bool AllowAnonymous => false;
+    public virtual bool AllowAnonymous => true;
     public virtual IReadOnlySet<RoleName> RequiresAnyRole => ReadOnly.Set<RoleName>();
     public virtual IReadOnlySet<RoleName> RequiresAllRoles => ReadOnly.Set<RoleName>();
 
@@ -18,10 +18,10 @@ public abstract class CqsCommand {
     }
 }
 
-public abstract class CqsCommand<I, O> : CqsCommand {
-    public override async Task<object?> Execute(object? args) {
-        var result = await Execute((I)args.OrElseThrow("Unexpected null command arguments"));
-        return result;
+public abstract class CqsCommand<I, O> : CqsCommand, IAction<I, O> {
+    public override Task<object?> Execute(object? args) {
+        var a = (I) args.OrElseThrow("Missing arguments");
+        return Execute(a).CastReverse();
     }
 
     public abstract Task<O> Execute(I args);
@@ -35,44 +35,12 @@ public abstract class CqsCommand<I, O> : CqsCommand {
     }
 }
 
-public abstract class CqsCommand<O> : CqsCommand {
+public abstract class CqsCommand<O> : CqsCommand, IAction<object?, O> {
     public override Task<object?> Execute(object? args) {
-        return Execute().ContinueWith(t => (object?)t.Result);
+        return Execute().CastReverse();
     }
 
     public abstract Task<O> Execute();
-
-    public override Task Rollback(object? args) {
-        return Rollback();
-    }
-
-    public virtual Task Rollback() {
-        throw new AppException("Command does not support rollbacks");
-    }
-}
-
-public abstract class PureCqsCommand<I> : CqsCommand {
-    public override Task<object?> Execute(object? args) {
-        return Execute((I)args.OrElseThrow("Unexpected null command arguments")).ContinueWith(_ => (object?) null);
-    }
-
-    public abstract Task Execute(I args);
-
-    public override Task Rollback(object? args) {
-        return Rollback();
-    }
-
-    public virtual Task Rollback() {
-        throw new AppException("Command does not support rollbacks");
-    }
-}
-
-public abstract class PureCqsCommand : CqsCommand {
-    public override Task<object?> Execute(object? args) {
-        return Execute().ContinueWith(_ => (object?) null);
-    }
-
-    public abstract Task Execute();
 
     public override Task Rollback(object? args) {
         return Rollback();

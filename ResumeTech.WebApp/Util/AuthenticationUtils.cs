@@ -24,6 +24,8 @@ public static class AuthenticationUtils {
                 options.SignIn.RequireConfirmedEmail = userOptions.RequireConfirmedEmail;
                 options.User.RequireUniqueEmail = true;
                 options.Password.RequiredLength = 8;
+                options.Password.RequireDigit = false;
+                options.Password.RequireNonAlphanumeric = false;
             })
             .AddDefaultTokenProviders()
             .AddRoles<Role>()

@@ -15,7 +15,7 @@ public interface IUserManager {
 
     public Task<IUser> LoginAsync(string usernameOrEmail, string password);
     
-    public Task<IUser> CreateUserAsync(CreateUserRequest request, IEnumerable<RoleName> roles);
+    public Task<IUser> CreateUserAsync(CreateUserRequest request);
     public Task CreateRoleAsync(CreateRoleRequest request);
     public Task AssignRoleAsync(IUser user, RoleName roleName);
 

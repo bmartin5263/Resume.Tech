@@ -2,7 +2,6 @@
 A tool for building resumes, portfolios, and websites for your professional history
 
 ## Subdomains
-
 Resume.Tech roughly follows Domain Driven Design principals. The overall application is divided into the following subdomains:
 - Identity Verification
   - Handles everything related to making sure the right people have access to the right data. 
@@ -23,6 +22,8 @@ Resume.Tech roughly follows Domain Driven Design principals. The overall applica
   - Classes include: `Website`, `IPage`, `ResumePage`
 
 ![Subdomains](https://github.com/bmartin5263/Resume.Tech/blob/master/Wiki/Subdomains.png?raw=true)
+
+In general, subdomain boundaries are considered based on where logical microservices _could_ be drawn.
 
 ## Object Categories
 All objects/values within the system fall into 1 or more of the following categories
@@ -72,8 +73,30 @@ All objects/values within the system fall into 1 or more of the following catego
   - DTOs and request objects fall into this category
   - Can be a `class`, `record`, or a `struct` depending on whatever makes sense for that usecase
 
+## Events
+Events are classified as either Domain or Integration events, and Integration events can either be Local or Global (best names I could come up with)
+
+- **Domain Events**
+  - Do not leave the subdomain that published them
+    - For example, Identity Domain events cannot be consumed by Experience Management
+  - Are executed _in the same Unit of Work_ as the action that produced them
+    - This means that if any event handlers fail, the whole operation fails
+  - Allows for decoupling components within an individual Subdomain while maintaining atomicity
+- **Integration Events**
+  - _Leave_ the subdomain so that other subdomains can react to change
+  - Asynchronously processed, outside of the Unit of Work that produced the event
+  - **Local**
+    - To consume the consuming service must directly depend on the producing service
+    - Events will generally contain more domain-specific data
+  - **Global**
+    - Live in the common subdomain, which is used by every other subdomain
+    - Every subdomain can consume the event without directly depending on the producer
+
 ## Concepts & Idioms
 The following are various small patterns and ideas that are spread throughout the project that any new developer to the project should familiarize themselves with
+
+### Unit of Work
+Represents a single, atomic change to the state of a single subdomain.
 
 ### Soft Deleting
 It is sometimes impractical to actually delete an entity from the database in case you need to undo the operation or want to use deleted data for analysis.

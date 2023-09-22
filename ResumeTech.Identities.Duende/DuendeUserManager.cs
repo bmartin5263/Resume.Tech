@@ -61,20 +61,14 @@ public class DuendeUserManager : IUserManager {
         return user;
     }
 
-    public async Task<IUser> CreateUserAsync(CreateUserRequest request, IEnumerable<RoleName> roles) {
-        var user = await NewUser(request);
-
-        if (user.EmailConfirmed) {
-            return (await UserManager.FindByNameAsync(request.Username)).OrElseThrow();
-        }
-
-        return (await UserManager.FindByNameAsync(request.Username)).OrElseThrow();
+    public async Task<IUser> CreateUserAsync(CreateUserRequest request) {
+        return await NewUser(request);
     }
 
     private async Task<User> NewUser(CreateUserRequest request) {
         var user = new User(request.Username) {
             Id = request.Id,
-            CreatedAt = request.CreatedAt,
+            CreatedAt = DateTimeOffset.UtcNow,
             Email = request.Email.Value,
             EmailConfirmed = request.EmailConfirmed,
             SecurityStamp = request.SecurityStamp

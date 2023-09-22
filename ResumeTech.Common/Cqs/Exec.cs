@@ -23,37 +23,43 @@ public class Exec {
         UserDetailsProvider = userDetailsProvider;
     }
 
-    /**
-     * Executes a CQS Command with arguments and returns its result
-     */
-    public async Task<O> Command<I, O>(CqsCommand<I, O> command, I args) {
-        var result = await ExecuteCommand(command, args);
-        return (O) result.OrElseThrow("Command returned null");
+    public Task<O?> Query<I, O>(I args) {
+        var type = typeof(CqsQuery<,>).MakeGenericType(typeof(I), typeof(O));
+        var query = (CqsQuery<I, O>) UnitOfWork.GetService(type);
+        return RunQuery(query, args).Cast<O>();
     }
-    
-    /**
-     * Executes a CQS Command and returns its result
-     */
-    public async Task<O> Command<O>(CqsCommand<O> command) {
-        var result = await ExecuteCommand(command, null);
-        return (O) result.OrElseThrow("Command returned null");
+
+    public Task<O?> Query<O>() {
+        var type = typeof(CqsQuery<>).MakeGenericType(typeof(O));
+        var query = (CqsQuery<O>) UnitOfWork.GetService(type);
+        return RunQuery(query, null).Cast<O>();
     }
-    
-    /**
-     * Executes a Pure CQS Command with arguments and returns an empty task
-     */
-    public Task Command<I>(PureCqsCommand<I> command, I args) {
+
+    public Task<O?> Command<I, O>(I args) {
+        var type = typeof(CqsCommand<,>).MakeGenericType(typeof(I), typeof(O));
+        var command = (CqsCommand<I, O>) UnitOfWork.GetService(type);
+        return ExecuteCommand(command, args).Cast<O>();
+    }
+
+    public Task<O?> Command<O>() {
+        var type = typeof(CqsCommand<>).MakeGenericType(typeof(O));
+        var command = (CqsCommand<O>) UnitOfWork.GetService(type);
+        return ExecuteCommand(command, null).Cast<O>();
+    }
+
+    public Task Command<I>(I args) {
+        var type = typeof(PureCqsCommand<>).MakeGenericType(typeof(I));
+        var command = (PureCqsCommand<I>) UnitOfWork.GetService(type);
         return ExecuteCommand(command, args);
     }
-    
-    /**
-     * Executes a Pure CQS Command and returns an empty task
-     */
-    public Task Command(PureCqsCommand command) {
+
+    public Task Command() {
+        var type = typeof(PureCqsCommand);
+        var command = (PureCqsCommand) UnitOfWork.GetService(type);
         return ExecuteCommand(command, null);
     }
-    
-    private Task<object?> ExecuteCommand(CqsCommand command, object? args) {
+
+    public Task<object?> ExecuteCommand(CqsCommand command, object? args) {
         var logPolicy = command.LogPolicy;
         Log.LogInformation($"Executing Command {command.Name} with Log Policy {logPolicy}");
         return ExecuteCommandWithoutLogging(command, args);
@@ -77,7 +83,7 @@ public class Exec {
         }
         
         var result = await command.Execute(args);
-        var events = await UnitOfWork.Commit();
+        var events = await UnitOfWork.Commit(); // saves db changes
         if (events.Count > 0) {
             DispatchEvents(events);
         }
@@ -108,27 +114,9 @@ public class Exec {
     //         throw;
     //     }
     // }
-
-    public Task<O> Query<I, O>(CqsQuery<I, O> query, I args) {
-        return RunQuery(query, args).ContinueWith(t => {
-            if (t.IsFaulted) {
-                throw t.Exception!.InnerException!;
-            }
-            return (O)t.Result.OrElseThrow("Query returned null");
-        });
-
-    }
     
-    public Task<O> Query<O>(CqsQuery<O> query) {
-        return RunQuery(query, null).ContinueWith(t => {
-            if (t.IsFaulted) {
-                throw t.Exception!.InnerException!;
-            }
-            return (O)t.Result.OrElseThrow("Query returned null");
-        });
-    }
 
-    private Task<object> RunQuery(CqsQuery query, object? args) {
+    public Task<object?> RunQuery(CqsQuery query, object? args) {
         var userDetails = UserDetailsProvider.CurrentUser;
         var username = userDetails.Id?.Value.ToString("N") ?? "Anonymous";
         Log.LogInformation($"{username} is executing Query {query.Name}");
