@@ -36,6 +36,23 @@ public static class TypeUtils {
         return result;
     }
     
+    public static IDictionary<Type, Type> FindAllKnownGenericSubtypesFromBaseClass(this Type genericType, string assemblyName) {
+        var result = new Dictionary<Type, Type>();
+        var assemblies = AppDomain.CurrentDomain.GetAssemblies()
+            .Where(a => a.FullName!.StartsWith(assemblyName));
+        var types = assemblies
+            .SelectMany(a => a.GetTypes())
+            .Where(t => t is { IsAbstract: false, IsInterface: false });
+        foreach (var type in types) {
+            var reifiedGenericType = type.GetInheritedGenericTypeBaseClass(genericType);
+            if (reifiedGenericType != null) {
+                result[type] = reifiedGenericType;
+            }
+        }
+
+        return result;
+    }
+    
     public static IDictionary<Type, ISet<Type>> FindAllKnownGenericSubtypes2(this Type genericType, string assemblyName) {
         IDictionary<Type, ISet<Type>> result = new Dictionary<Type, ISet<Type>>();
         IDictionary<Type, Type> repoTypes = genericType.FindAllKnownGenericSubtypes(assemblyName);
@@ -65,6 +82,19 @@ public static class TypeUtils {
             return type.GetInterfaces()
                 .FirstOrDefault(i => i.IsGenericType && i.GetGenericTypeDefinition() == genericType);
         }
+    }
+    
+
+    public static Type? GetInheritedGenericTypeBaseClass(this Type type, Type genericType) {
+        var currentType = type;
+        while (currentType.BaseType is not null && currentType.BaseType != typeof(object)) {
+            if (currentType.BaseType.IsGenericType && currentType.BaseType.GetGenericTypeDefinition() == genericType) {
+                return currentType.BaseType;
+            }
+            currentType = currentType.BaseType;
+        }
+
+        return null;
     }
     
 }

@@ -1,8 +1,8 @@
 using System.Net;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Logging;
+using ResumeTech.Common.Actions;
 using ResumeTech.Common.Auth;
-using ResumeTech.Common.Cqs;
 using ResumeTech.Common.Domain;
 using ResumeTech.Common.Exceptions;
 using ResumeTech.Common.Options;
@@ -71,7 +71,7 @@ public class DuendeUserManager : IUserManager {
             CreatedAt = DateTimeOffset.UtcNow,
             Email = request.Email.Value,
             EmailConfirmed = request.EmailConfirmed,
-            SecurityStamp = request.SecurityStamp
+            SecurityStamp = Guid.NewGuid().ToString()
         };
         Log.LogInformation($"Created User(Name={user.UserName}, EmailConfirmed={user.EmailConfirmed})");
         var result = await UserManager.CreateAsync(user, request.Password);
@@ -86,6 +86,12 @@ public class DuendeUserManager : IUserManager {
                     ))
                 )
                 .ToException();
+        }
+        
+        result = await UserManager.AddToRoleAsync(user, RoleName.User.ToString());
+        if (!result.Succeeded) {
+            var error = string.Join(", ", result.Errors.Select(e => e.Description));
+            throw new AppException($"Failed to assign 'User' role to new user. Error(s): {error}");
         }
         UnitOfWork.RaiseEvent(new UserCreatedEvent(request.Email, request.EmailConfirmed));
 
@@ -218,14 +224,9 @@ public class DuendeUserManager : IUserManager {
         return user;
     }
 
-    public async Task<ISet<RoleName>> GetRolesAsync(IUser user) {
-        var roles = await UserManager.GetRolesAsync((User)user);
-        return roles
-            .Select(r => {
-                if (Enum.TryParse((string?) r, out RoleName name)) {
-                    return name;
-                }
-                throw new AppException($"Failed to convert Role {r} into Enum");
-            }).ToHashSet();
+    public async Task<IList<IRole>> GetRolesAsync(IUser user) {
+        IList<IRole> allRoles = RoleManager.Roles.Select(r => (IRole) r).ToList();
+        ISet<string> assignedRoles = (await UserManager.GetRolesAsync((User) user)).ToHashSet();
+        return allRoles.Where(r => assignedRoles.Contains(r.RoleName.ToString())).ToList();
     }
 }

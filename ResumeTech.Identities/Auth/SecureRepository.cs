@@ -1,5 +1,7 @@
+using ResumeTech.Common.Auth;
 using ResumeTech.Common.Domain;
 using ResumeTech.Common.Repository;
+using ResumeTech.Common.Utility;
 using ResumeTech.Identities.Users;
 
 namespace ResumeTech.Identities.Auth; 
@@ -11,7 +13,7 @@ public class SecureRepository<ID, TEntity, TRepository>
 {
     private TRepository Impl { get; }
     private Authorizer<TEntity> Authorizer { get; }
-    public UserDetails CurrentUser => Authorizer.CurrentUser;
+    public UserId CurrentUserId => Authorizer.CurrentUser.Id.OrElseThrow()!.Value;
     
     public SecureRepository(TRepository Impl, Authorizer<TEntity> Authorizer) {
         this.Impl = Impl;

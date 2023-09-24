@@ -1,5 +1,3 @@
-using ResumeTech.Identities.Users;
-
 namespace ResumeTech.Common.Auth; 
 
 public interface IUserDetailsProvider {

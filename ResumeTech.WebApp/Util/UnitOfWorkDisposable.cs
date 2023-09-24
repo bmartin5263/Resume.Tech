@@ -1,4 +1,4 @@
-using ResumeTech.Common.Cqs;
+using ResumeTech.Common.Actions;
 using ResumeTech.Common.Events;
 using ResumeTech.Common.Exceptions;
 using ResumeTech.Common.Utility;

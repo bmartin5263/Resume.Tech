@@ -1,6 +1,6 @@
 using ResumeTech.Common.Events;
 
-namespace ResumeTech.Common.Cqs; 
+namespace ResumeTech.Common.Actions; 
 
 public interface IUnitOfWork {
     Task<ICollection<IDomainEvent>> Commit();

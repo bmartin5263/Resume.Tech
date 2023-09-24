@@ -1,13 +1,13 @@
+using ResumeTech.Common.Actions;
 using ResumeTech.Common.Auth;
-using ResumeTech.Common.Cqs;
+using ResumeTech.Common.Utility;
 using ResumeTech.Identities.Users;
 
 namespace ResumeTech.Identities.Command; 
 
-public class CreateUser : CqsCommand<CreateUserRequest, UserDto> {
+public class CreateUser : Command<CreateUserRequest, UserDto> {
     public override string Name => "CreateUser";
-    public override bool AllowAnonymous => true;
-    public override HashSet<RoleName> RequiresAnyRole => new() { RoleName.Admin };
+    public override RoleName[] Roles { get; } = { RoleName.Admin };
 
     private IUserManager UserManager { get; }
 
@@ -15,7 +15,7 @@ public class CreateUser : CqsCommand<CreateUserRequest, UserDto> {
         UserManager = userManager;
     }
 
-    public override async Task<UserDto> Execute(CreateUserRequest args) {
+    public override async Task<UserDto> Run(CreateUserRequest args) {
         var user = await UserManager.CreateUserAsync(args);
         return user.ToDto();
     }

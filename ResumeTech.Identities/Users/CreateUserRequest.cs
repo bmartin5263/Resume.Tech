@@ -8,6 +8,5 @@ public sealed record CreateUserRequest(
     string Username,
     string Password,
     EmailAddress Email,
-    string SecurityStamp,
     bool EmailConfirmed
 );

@@ -16,16 +16,21 @@ public class Authorizer<TEntity> where TEntity : class {
 
     public async Task<TEntity> AssertCanRead(TEntity entity) {
         if (!await CanRead(entity)) {
-            throw new AccessDeniedException();
+            throw new AccessDeniedException(DeveloperMessage: "Failed entity-level authorization check");
         }
         return entity;
     }
     
 
     public async Task<bool> CanRead(TEntity entity) {
-        var userId = UserDetailsProvider.CurrentUser.Id;
+        var user = UserDetailsProvider.CurrentUser;
+        var userId = user.Id;
         if (userId == null) {
-            throw new AccessDeniedException();
+            throw new AccessDeniedException(DeveloperMessage: "Failed entity-level authorization check");
+        }
+
+        if (user.IsAdmin()) {
+            return true;
         }
         
         foreach (var filter in Filters) {
@@ -33,6 +38,7 @@ public class Authorizer<TEntity> where TEntity : class {
                 return false;
             }
         }
+        
         return true;
     }
 }

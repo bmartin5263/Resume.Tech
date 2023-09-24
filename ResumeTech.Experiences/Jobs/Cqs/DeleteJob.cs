@@ -1,8 +1,8 @@
-using ResumeTech.Common.Cqs;
+using ResumeTech.Common.Actions;
 
 namespace ResumeTech.Experiences.Jobs.Cqs;
 
-public class DeleteJob : PureCqsCommand<DeleteJobRequest> {
+public class DeleteJob : PureCommand<DeleteJobRequest> {
     public override string Name => "DeleteJob";
     
     private JobManager JobManager { get; }
@@ -11,7 +11,7 @@ public class DeleteJob : PureCqsCommand<DeleteJobRequest> {
         JobManager = jobManager;
     }
 
-    public override Task Execute(DeleteJobRequest args) { 
+    public override Task RunWithoutResult(DeleteJobRequest args) { 
         return JobManager.DeleteJob(args);
     }
 }

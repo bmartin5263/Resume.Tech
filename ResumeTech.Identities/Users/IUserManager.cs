@@ -11,7 +11,7 @@ public interface IUserManager {
     public Task<IUser?> FindUserByUsernameAsync(string username);
     public Task<IUser?> FindUserByIdAsync(UserId userId);
     public Task<IUser?> FindUserByIdWithRefreshTokenAsync(UserId userId, Guid refreshToken);
-    public Task<ISet<RoleName>> GetRolesAsync(IUser user);
+    public Task<IList<IRole>> GetRolesAsync(IUser user);
 
     public Task<IUser> LoginAsync(string usernameOrEmail, string password);
     

@@ -5,7 +5,10 @@ using ResumeTech.Identities.Users;
 
 namespace ResumeTech.Identities.Duende;
 
+// Tell compiler to ignore nullability differences from IUser
+#pragma warning disable CS8766 
 public class User : IdentityUser<UserId>, IUser {
+#pragma warning restore CS8766
     
     public sealed override UserId Id { get; set; }
     public DateTimeOffset CreatedAt { get; set; }

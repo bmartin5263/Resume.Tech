@@ -1,14 +1,15 @@
+using System.Net;
 using System.Reflection;
 using Microsoft.Extensions.Logging.Console;
+using ResumeTech.Application.Cqs;
 using ResumeTech.Application.Middleware;
 using ResumeTech.Application.Serialization;
 using ResumeTech.Application.Util;
+using ResumeTech.Common.Actions;
 using ResumeTech.Common.Auth;
-using ResumeTech.Common.Cqs;
-using ResumeTech.Common.Domain;
+using ResumeTech.Common.Exceptions;
 using ResumeTech.Common.Options;
 using ResumeTech.Common.Utility;
-using ResumeTech.Identities.Command;
 using ResumeTech.Identities.Users;
 
 namespace ResumeTech.Application;
@@ -27,8 +28,9 @@ internal class Program {
         var builder = WebApplication.CreateBuilder(args);
         var userOptions = builder.BindOptions<UserOptions>("User");
         var securityOptions = builder.BindOptions<SecurityOptions>("Security");
+        builder.BindOptions<JwtOptions>("Security:JWT");
         var databaseOptions = builder.BindOptions<DatabaseOptions>("Database");
-        var webOptions = builder.BindOptions<WebOptions>("Web");
+        builder.BindOptions<WebOptions>("Web");
         var mappedTypes = TypeMapping.GenerateTypeMappings();
 
         builder.ConfigureJson(mappedTypes);
@@ -45,23 +47,23 @@ internal class Program {
         builder.Services.AddEndpointsApiExplorer();
         builder.Services.AddSwaggerGen();
         builder.Services.AddLogging(logging =>
-            logging.AddSimpleConsole(options =>
-            {
+            logging.AddSimpleConsole(options => {
                 options.SingleLine = true;
                 options.ColorBehavior = LoggerColorBehavior.Disabled;
                 options.TimestampFormat = "yyyy-MM-dd HH:mm:ss ";
+                options.UseUtcTimestamp = true;
             })
         );
-
+        
         var app = builder.Build();
         Logging.LoggerFactory = app.Services.GetRequiredService<ILoggerFactory>();
 
         app.UseSwagger();
         app.UseSwaggerUI();
-        app.UseMiddleware<SetUserMiddleware>();
         app.UseExceptionHandler(new ExceptionHandlerOptions {
             ExceptionHandler = new JsonExceptionMiddleware(app.Environment.IsEnvironment("Local")).Invoke
         });
+        app.UseMiddleware<NotFoundMiddleware>();
         app.UseAuthorization();
         app.MapControllers();
         
@@ -71,27 +73,10 @@ internal class Program {
         
         Console.WriteLine("Initializing");
 
-        // try {
-        //     var exec = app.Services.GetRequiredService<Exec>();
-        //     var createUser = app.Services.GetRequiredService<CreateUser>();
-        //     var userDetails = app.Services.GetRequiredService<IUserDetailsProvider>();
-        //     userDetails.Set(UserDetails.NotLoggedIn);
-        //
-        //     await exec.Command(createUser,
-        //         new CreateUserRequest(
-        //             Id: UserId.Generate(),
-        //             Username: "admin",
-        //             Password: "Password",
-        //             Email: new EmailAddress("admin@example.com"),
-        //             SecurityStamp: Guid.NewGuid().ToString(),
-        //             EmailConfirmed: true
-        //         ));
-        // }
-        // catch (Exception) {
-        //     // ignored
-        // }
+        var exec = app.Services.GetRequiredService<Exec>();
+        var unitOfWork = app.Services.GetRequiredService<IUnitOfWork>();
+        await exec.Command(unitOfWork.GetService<InitializeApp>());
 
-
-        app.Run();
+        await app.RunAsync();
     }
 }

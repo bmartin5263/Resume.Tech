@@ -1,6 +1,6 @@
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 
-namespace ResumeTech.Application.Middleware; 
+namespace ResumeTech.Application.Util; 
 
 public class JwtCookieExtractor : JwtBearerEvents {
     public override Task MessageReceived(MessageReceivedContext context) {

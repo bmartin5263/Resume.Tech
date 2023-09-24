@@ -1,17 +1,24 @@
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using ResumeTech.Common.Cqs;
+using ResumeTech.Application.Util;
+using ResumeTech.Common.Actions;
+using ResumeTech.Common.Exceptions;
+using ResumeTech.Common.Utility;
 using ResumeTech.Experiences.Jobs;
 using ResumeTech.Experiences.Jobs.Cqs;
 
 namespace ResumeTech.Application.Controllers;
 
+[Authorize]
 [ApiController]
 [Route("jobs")]
 public class JobController : ControllerBase {
     private Exec Exec { get; }
+    private IUnitOfWork UnitOfWork { get; }
 
-    public JobController(Exec exec) {
+    public JobController(Exec exec, IUnitOfWork unitOfWork) {
         Exec = exec;
+        UnitOfWork = unitOfWork;
     }
 
     /// <summary>
@@ -19,8 +26,9 @@ public class JobController : ControllerBase {
     /// </summary>
     [Route("")]
     [HttpPost]
-    public Task<JobDto?> CreateJob([FromBody] CreateJobRequest request) {
-        return Exec.Command<CreateJobRequest, JobDto>(request);
+    public Task<JobDto> CreateJob([FromBody] CreateJobRequest request) {
+        var command = UnitOfWork.GetService<CreateJob>();
+        return Exec.Command(command, request);
     }
     
     /// <summary>
@@ -28,10 +36,13 @@ public class JobController : ControllerBase {
     /// </summary>
     [Route("{id}")]
     [HttpGet]
-    public Task<JobDto?> GetJobById(string id) {
-        return Exec.Query<GetJobByIdRequest, JobDto>(new GetJobByIdRequest(
+    public async Task<JobDto> GetJobById(string id) {
+        var jobId = JobId.Parse(id);
+        var query = UnitOfWork.GetService<GetJobById>();
+        var result = await Exec.Query(query, new GetJobByIdRequest(
             Id: JobId.Parse(id))
         );
+        return result.OrElseNotFound(jobId);
     }
     
     /// <summary>
@@ -39,8 +50,9 @@ public class JobController : ControllerBase {
     /// </summary>
     [Route("{id}")]
     [HttpPatch]
-    public Task<JobDto?> PatchJob(string id, [FromBody] PatchJobRequest request) {
-        return Exec.Command<PatchJobRequest, JobDto>(request with {
+    public Task<JobDto> PatchJob(string id, [FromBody] PatchJobRequest request) {
+        var command = UnitOfWork.GetService<PatchJob>();
+        return Exec.Command(command, request with {
             Id = JobId.Parse(id)
         });
     }
@@ -51,7 +63,19 @@ public class JobController : ControllerBase {
     [Route("{id}")]
     [HttpDelete]
     public Task DeleteJob(string id) {
-        return Exec.Command(new DeleteJobRequest(Id: JobId.Parse(id)));
+        var command = UnitOfWork.GetService<DeleteJob>();
+        return Exec.Command(command, new DeleteJobRequest(Id: JobId.Parse(id)));
+    }
+
+    /// <summary>
+    /// Purge a Job
+    /// </summary>
+    [Route("{id}/purge")]
+    [HttpDelete]
+    [Authorize(Roles = "Admin")]
+    public Task PurgeJob(string id) {
+        var command = UnitOfWork.GetService<PurgeJob>();
+        return Exec.Command(command, new DeleteJobRequest(Id: JobId.Parse(id)));
     }
 
 }

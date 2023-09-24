@@ -1,12 +1,13 @@
 using System.Collections.Immutable;
+using ResumeTech.Common.Actions;
 using ResumeTech.Common.Auth;
-using ResumeTech.Common.Cqs;
 using ResumeTech.Common.Events;
 using ResumeTech.Common.Utility;
 using ResumeTech.Experiences.Jobs;
 using ResumeTech.Experiences.Jobs.Cqs;
 using ResumeTech.Identities.Auth;
 using ResumeTech.Identities.Auth.Filters;
+using ResumeTech.Identities.Domain;
 using ResumeTech.Identities.Duende;
 using ResumeTech.Identities.Users;
 
@@ -16,9 +17,9 @@ public static class ServiceUtils {
     
     public static IList<Type> AutoAddServices(this WebApplicationBuilder builder) {
         var commandsAndQueries = new List<Type>();
-        
-        commandsAndQueries.AddRange(builder.AutoAddCqsCommands());
-        commandsAndQueries.AddRange(builder.AutoAddCqsQueries());
+
+        builder.AutoAddCqsCommands();
+        builder.AutoAddCqsQueries();
         
         if (builder.Environment.EnvironmentName == "Test") {
             builder.AddInMemoryRepositories();
@@ -30,28 +31,31 @@ public static class ServiceUtils {
         return commandsAndQueries;
     }
 
-    private static IList<Type> AutoAddCqsCommands(this WebApplicationBuilder builder) {
-        var commandTypes = typeof(CqsCommand).FindAllKnownSubtypes(Program.RootAssembly).ToImmutableList();
-        foreach (var commandType in commandTypes) {
-            builder.Services.AddScoped(commandType);
+    private static void AutoAddCqsCommands(this WebApplicationBuilder builder) {
+        var commandTypes = typeof(Command<,>).FindAllKnownGenericSubtypesFromBaseClass(Program.RootAssembly).ToImmutableList();
+        foreach (var (concreteType, interfaceType) in commandTypes) {
+            builder.Services.AddScoped(concreteType);
+            builder.Services.AddScoped(interfaceType, concreteType);
         }
-        return commandTypes;
     }
 
-    private static IList<Type> AutoAddCqsQueries(this WebApplicationBuilder builder) {
-        var queryTypes = typeof(CqsQuery).FindAllKnownSubtypes(Program.RootAssembly).ToImmutableList();
-        foreach (var queryType in queryTypes) {
-            builder.Services.AddScoped(queryType);
+    private static void AutoAddCqsQueries(this WebApplicationBuilder builder) {
+        var queryTypes = typeof(Query<,>).FindAllKnownGenericSubtypesFromBaseClass(Program.RootAssembly).ToImmutableList();
+        foreach (var (concreteType, interfaceType) in queryTypes) {
+            builder.Services.AddScoped(concreteType);
+            builder.Services.AddScoped(interfaceType, concreteType);
         }
-        return queryTypes;
     }
 
     public static void ManuallyAddServices(this WebApplicationBuilder builder, IEnumerable<Type> commandsAndQueries) {
+        builder.Services.AddHttpContextAccessor();
+
         builder.Services.AddSingleton<IUnitOfWorkFactory, UnitOfWorkFactory>();
         builder.Services.AddSingleton<IEventDispatcher, EventDispatcher>();
         
         builder.Services.AddScoped<JobManager>();
         builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
+        builder.Services.AddScoped<IJwtMinter, JwtMinter>();
         builder.Services.AddScoped<Exec>();
         builder.Services.AddScoped<IUserDetailsProvider, UserDetailsProvider>();
         builder.Services.AddScoped<IUserManager, DuendeUserManager>();

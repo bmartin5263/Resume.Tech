@@ -4,5 +4,5 @@ namespace ResumeTech.Identities.Users;
 
 public interface IRole {
     public UserId Id { get; }
-    public string? Name { get; }
+    public RoleName RoleName { get; }
 }

@@ -1,4 +1,4 @@
-using ResumeTech.Common.Cqs;
+using ResumeTech.Common.Actions;
 
 namespace ResumeTech.Application.Util; 
 
