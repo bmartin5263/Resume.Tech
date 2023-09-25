@@ -1,12 +1,18 @@
 namespace ResumeTech.Experiences.Common; 
 
-public readonly record struct DateOnlyRange {
+public sealed record DateOnlyRange {
     public DateOnly? Start { get; }
     public DateOnly? End { get; }
 
-    public DateOnlyRange(DateOnly Start, DateOnly End) {
+    private DateOnlyRange() {
+        Start = null;
+        End = null;
+    }
+
+    public DateOnlyRange(DateOnly? Start, DateOnly? End = null) {
         this.Start = Start;
         this.End = End;
+        Validate();
     }
 
     public void Deconstruct(out DateOnly? Start, out DateOnly? End) {

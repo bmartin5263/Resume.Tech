@@ -4,7 +4,6 @@ using ResumeTech.Common.Auth;
 using ResumeTech.Common.Events;
 using ResumeTech.Common.Utility;
 using ResumeTech.Experiences.Jobs;
-using ResumeTech.Experiences.Jobs.Cqs;
 using ResumeTech.Identities.Auth;
 using ResumeTech.Identities.Auth.Filters;
 using ResumeTech.Identities.Domain;

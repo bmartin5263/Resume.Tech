@@ -6,7 +6,7 @@ namespace ResumeTech.Experiences.Contacts;
 
 public class ContactInfo : IEntity<ContactInfoId>, IAuditedEntity, ISoftDeletable {
     [Pii] public PersonName Name { get; set; }
-    [Pii] public Address Address { get; set; }
+    [Pii] public Location Location { get; set; }
     [Pii] public IList<Link> Links { get; private set; } = new List<Link>();
 
     // Common Entity Properties
@@ -18,11 +18,11 @@ public class ContactInfo : IEntity<ContactInfoId>, IAuditedEntity, ISoftDeletabl
     // Default Constructor Needed for Persistence
     private ContactInfo() {
         Name = null!;
-        Address = null!;
+        Location = null!;
     }
 
-    public ContactInfo(PersonName Name, Address? Address = null) {
+    public ContactInfo(PersonName Name, Location? Address = null) {
         this.Name = Name;
-        this.Address = Address.OrElse(new Address());
+        this.Location = Address.OrElse(new Location());
     }
 }

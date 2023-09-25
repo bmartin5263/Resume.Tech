@@ -20,11 +20,13 @@ public class Film : IProject, IEntity<FilmId> {
     // Default Constructor Needed for Persistence
     private Film() {
         Name = null!;
+        Dates = null!;
         Title = null!;
     }
 
     public Film(string name, string title) {
         Name = name;
         Title = title;
+        Dates = new DateOnlyRange(Start: null);
     }
 }

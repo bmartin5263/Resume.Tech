@@ -4,7 +4,7 @@ using Microsoft.Extensions.Logging;
 using ResumeTech.Common.Actions;
 using ResumeTech.Common.Auth;
 using ResumeTech.Common.Domain;
-using ResumeTech.Common.Exceptions;
+using ResumeTech.Common.Error;
 using ResumeTech.Common.Options;
 using ResumeTech.Common.Utility;
 using ResumeTech.Identities.Events;
@@ -77,7 +77,7 @@ public class DuendeUserManager : IUserManager {
         var result = await UserManager.CreateAsync(user, request.Password);
 
         if (!result.Succeeded) {
-            throw Errors.Builder(HttpStatusCode.BadRequest)
+            throw AppError.Builder(HttpStatusCode.BadRequest)
                 .SubErrors(result.Errors
                     .Where(e => e.Code.StartsWith("Password"))
                     .Select(e => new AppSubError(
@@ -104,10 +104,10 @@ public class DuendeUserManager : IUserManager {
 
     public async Task SendConfirmEmailMessage(EmailAddress emailAddress) {
         var user = (await UserManager.FindByEmailAsync(emailAddress.Value))
-            .OrElseThrow(() => Errors.EntityNotFound("User", emailAddress.Value).ToException());
+            .OrElseThrow();
 
         if (user.EmailConfirmed) {
-            throw Errors.Builder(HttpStatusCode.BadRequest)
+            throw AppError.Builder(HttpStatusCode.BadRequest)
                 .UserMessage("User's email is already confirmed")
                 .ToException();
         }
@@ -147,7 +147,7 @@ public class DuendeUserManager : IUserManager {
         }
         
         var label = usernameOrEmail.Contains('@') ? "email" : "username";
-        throw Errors.Builder(HttpStatusCode.BadRequest)
+        throw AppError.Builder(HttpStatusCode.BadRequest)
             .SubError("username", message: $"No User associated with {label} {usernameOrEmail}")
             .ToException();
     }
@@ -159,11 +159,11 @@ public class DuendeUserManager : IUserManager {
         if (!result.Succeeded) {
             var invalidTokenError = result.Errors.FirstOrDefault(e => e.Code.StartsWith("InvalidToken"));
             if (invalidTokenError != null) {
-                throw Errors.Builder(HttpStatusCode.BadRequest)
+                throw AppError.Builder(HttpStatusCode.BadRequest)
                     .UserMessage("Unable to reset password at this time")
                     .ToException();
             }
-            throw Errors.Builder(HttpStatusCode.BadRequest)
+            throw AppError.Builder(HttpStatusCode.BadRequest)
                 .SubErrors(result.Errors
                     .Where(e => e.Code.StartsWith("Password"))
                     .Select(e => new AppSubError(
@@ -177,7 +177,7 @@ public class DuendeUserManager : IUserManager {
 
     public async Task ConfirmEmail(EmailAddress emailAddress, string token) {
         var user = (await UserManager.FindByEmailAsync(emailAddress.Value))
-            .OrElseThrow(() => Errors.EntityMissing<IUser>(emailAddress.Value).ToException());
+            .OrElseThrow();
         
         var result = await UserManager.ConfirmEmailAsync(user, token);
         if (!result.Succeeded) {
@@ -196,25 +196,31 @@ public class DuendeUserManager : IUserManager {
         if (user == null) {
             Log.LogInformation("Missing User");
             var label = usernameOrEmail.Contains('@') ? "email" : "username";
-            throw Errors.Unauthorized($"No account associated with {label} {usernameOrEmail}").ToException();
+            throw AppError.Builder(HttpStatusCode.Unauthorized)
+                .UserMessage($"No account associated with {label} {usernameOrEmail}")
+                .ToException();
         }
 
         if (!await UserManager.IsEmailConfirmedAsync(user)) {
             Log.LogInformation("User Email Not Confirmed");
             // var urlWithoutHttp = WebOptions.FrontendUrl.StripHttpProtocol();
-            throw Errors.Unauthorized().ToException();
+            throw AppError.Builder(HttpStatusCode.Unauthorized).ToException();
             // throw Errors.Unauthorized($"Email has not been confirmed. To resend email go to {urlWithoutHttp}/resend-email").ToException();
         }
 
         if (await UserManager.IsLockedOutAsync(user)) {
             Log.LogInformation("User Locked Out");
-            throw Errors.Unauthorized($"User is locked out until {user.LockoutEnd} ({user.LockoutEnd - DateTimeOffset.UtcNow}) due to password attempt failures").ToException();
+            throw AppError.Builder(HttpStatusCode.Unauthorized)
+                .UserMessage($"User is locked out until {user.LockoutEnd} ({user.LockoutEnd - DateTimeOffset.UtcNow}) due to password attempt failures")
+                .ToException();
         }
 
         if (!await UserManager.CheckPasswordAsync(user, password)) {
             Log.LogInformation("Password Check Failed");
             await UserManager.AccessFailedAsync(user);
-            throw Errors.Unauthorized($"Incorrect password").ToException();
+            throw AppError.Builder(HttpStatusCode.Unauthorized)
+                .UserMessage("Incorrect password")
+                .ToException();
         }
         
         if (await UserManager.GetAccessFailedCountAsync(user) > 0) {

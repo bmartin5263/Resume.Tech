@@ -3,7 +3,7 @@ using System.Net;
 using System.Text.Json.Serialization;
 using static System.Text.Json.Serialization.JsonIgnoreCondition;
 
-namespace ResumeTech.Common.Exceptions;
+namespace ResumeTech.Common.Error;
 
 public enum AppSubErrorType {
     DataMissing,
@@ -15,7 +15,7 @@ public sealed record AppSubError(string Path, string Message);
 public sealed record AppError {
     public Exception? CausedBy { get; }
     public HttpStatusCode StatusCode { get; }
-    public string? UserMessage { get; }
+    public string UserMessage { get; }
     public string? DeveloperMessage { get; }
     public IList<AppSubError> SubErrors { get; }
 
@@ -24,10 +24,18 @@ public sealed record AppError {
     public AppError(Exception? CausedBy = null, HttpStatusCode? StatusCode = null, string? UserMessage = null, string? DeveloperMessage = null, IList<AppSubError>? SubErrors = null) {
         this.CausedBy = CausedBy;
         this.StatusCode = StatusCode ?? (UserMessage != null ? HttpStatusCode.BadRequest : HttpStatusCode.InternalServerError);
-        this.UserMessage = UserMessage ??
-                           (SubErrors?.Count > 0 ? null : "A system error has occurred. Please contact support@User.io for Technical Support");
+        this.UserMessage = DetermineUserMessage(UserMessage, SubErrors);
         this.DeveloperMessage = DeveloperMessage ?? CausedBy?.Message;
         this.SubErrors = SubErrors ?? ImmutableList<AppSubError>.Empty;
+    }
+
+    private static string DetermineUserMessage(string? userMessage, IList<AppSubError>? subErrors) {
+        if (userMessage != null) {
+            return userMessage;
+        }
+        return subErrors?.Count > 0 
+            ? "Multiple errors occurred" 
+            : "A system error has occurred. Please contact support@resumetech.io for Technical Support";
     }
 
     public AppErrorDto ToDto(string traceId, bool includeDevInfo) {

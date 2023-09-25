@@ -8,7 +8,7 @@ public class Education : IEntity<EducationId>, IAuditedEntity, ISoftDeletable {
     
     public string Name { get; set; }
 
-    public Address Address { get; set; } = new();
+    public Location Location { get; set; } = new();
     
     public DegreeType DegreeType { get; set; }
 
@@ -27,7 +27,7 @@ public class Education : IEntity<EducationId>, IAuditedEntity, ISoftDeletable {
     // Default Constructor Needed for Persistence
     private Education() {
         Name = null!;
-        Address = null!;
+        Location = null!;
         AreaOfStudy = null!;
     }
 

@@ -1,6 +1,7 @@
 using ResumeTech.Common.Actions;
+using ResumeTech.Experiences.Jobs.Dto;
 
-namespace ResumeTech.Experiences.Jobs.Cqs;
+namespace ResumeTech.Experiences.Jobs.Actions;
 
 public class GetJobById : Query<GetJobByIdRequest, JobDto?> {
     public override string Name => "GetJobById";

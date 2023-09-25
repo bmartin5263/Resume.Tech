@@ -1,8 +1,8 @@
 using ResumeTech.Common.Actions;
 using ResumeTech.Common.Auth;
-using ResumeTech.Common.Utility;
+using ResumeTech.Experiences.Jobs.Dto;
 
-namespace ResumeTech.Experiences.Jobs.Cqs;
+namespace ResumeTech.Experiences.Jobs.Actions;
 
 public class PurgeJob : PureCommand<DeleteJobRequest> {
     public override string Name => "PurgeJob";

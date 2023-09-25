@@ -1,5 +1,5 @@
 using System.Net;
-using ResumeTech.Common.Exceptions;
+using ResumeTech.Common.Error;
 
 namespace ResumeTech.Common.Utility; 
 

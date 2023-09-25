@@ -7,6 +7,8 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
 using ResumeTech.Common.Auth;
 using ResumeTech.Common.Domain;
+using ResumeTech.Experiences.Common;
+using ResumeTech.Experiences.Contacts;
 using ResumeTech.Experiences.Jobs;
 using ResumeTech.Identities.Duende;
 using ResumeTech.Persistence.EntityFramework.Converter;
@@ -42,8 +44,23 @@ public class EFCoreContext :
         builder.Entity<UserLogin>().ToTable("UserLogin");
         builder.Entity<UserRole>().ToTable("UserRole");
         builder.Entity<UserToken>().ToTable("UserToken");
+
+        // builder.Entity<DateOnlyRange>().HasNoKey();
         
         builder.DefineTable<Job>();
+        builder.OneToMany<Job, Position, JobId>(u => u.Positions).IsRequired().OnDelete(DeleteBehavior.Cascade);
+        builder.Entity<Job>().HasJsonConversion(s => s.Location).HasDefaultValueSql("'{}'::jsonb");
+
+        builder.DefineTable<Position>();
+        builder.Entity<Position>().HasJsonConversion(s => s.BulletPoints);
+        builder.Entity<Position>().OwnsOne(
+            o => o.Dates,
+            sa =>
+            {
+                sa.Property(p => p.Start).HasColumnName("StartDate");
+                sa.Property(p => p.End).HasColumnName("EndDate");
+            });
+        // builder.Entity<Position>().HasJsonConversion(s => s.Dates);
     }
     
     protected override void ConfigureConventions(ModelConfigurationBuilder builder) {

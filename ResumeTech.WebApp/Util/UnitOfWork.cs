@@ -1,7 +1,7 @@
 using Microsoft.EntityFrameworkCore;
 using ResumeTech.Common.Actions;
+using ResumeTech.Common.Error;
 using ResumeTech.Common.Events;
-using ResumeTech.Common.Exceptions;
 using ResumeTech.Common.Utility;
 using ResumeTech.Persistence.EntityFramework;
 

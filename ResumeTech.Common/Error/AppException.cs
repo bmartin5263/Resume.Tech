@@ -1,4 +1,4 @@
-namespace ResumeTech.Common.Exceptions; 
+namespace ResumeTech.Common.Error; 
 
 public class AppException : Exception {
     public AppError Error { get; }

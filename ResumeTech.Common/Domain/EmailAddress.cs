@@ -1,4 +1,4 @@
-using ResumeTech.Common.Exceptions;
+using ResumeTech.Common.Error;
 
 namespace ResumeTech.Common.Domain; 
 

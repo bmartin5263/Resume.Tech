@@ -1,7 +1,7 @@
 using System.Net;
 using Microsoft.AspNetCore.Diagnostics;
 using ResumeTech.Common.Auth;
-using ResumeTech.Common.Exceptions;
+using ResumeTech.Common.Error;
 using ResumeTech.Common.Json;
 using ResumeTech.Common.Utility;
 

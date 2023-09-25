@@ -1,4 +1,4 @@
-using ResumeTech.Common.Exceptions;
+using ResumeTech.Common.Error;
 using ResumeTech.Common.Utility;
 
 namespace ResumeTech.Common.Repository;

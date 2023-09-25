@@ -1,5 +1,6 @@
 using ResumeTech.Common.Auth;
 using ResumeTech.Common.Utility;
+using ResumeTech.Experiences.Jobs.Dto;
 using ResumeTech.Identities.Auth;
 
 namespace ResumeTech.Experiences.Jobs; 
@@ -13,11 +14,17 @@ public class JobManager {
 
     public JobDto CreateJob(CreateJobRequest request) {
         var userId = JobRepository.CurrentUserId;
-        var job = new Job(OwnerId: userId, CompanyName: request.Name);
+        
+        var job = new Job(
+            OwnerId: userId,
+            Location: request.Location,
+            CompanyName: request.CompanyName,
+            Positions: request.Positions.Select(p => p.ToEntity())
+        );
         JobRepository.Add(job);
         return job.ToDto();
     }
-    
+
     public async Task<JobDto?> GetJobById(GetJobByIdRequest request) {
         var job = await JobRepository.ReadNullable(r => r.FindById(request.Id));
         return job?.ToDto();

@@ -7,14 +7,14 @@ namespace ResumeTech.Persistence.EntityFramework;
 
 public abstract class GenericRepository<ID, TEntity> : IRepository<ID, TEntity> where ID : IEntityId where TEntity : class, IEntity<ID> {
     protected EFCoreContext Context { get; }
-    protected DbSet<TEntity> Entities => Context.Set<TEntity>();
+    protected virtual IQueryable<TEntity> Entities => Context.Set<TEntity>();
 
-    public GenericRepository(EFCoreContext context) {
+    protected GenericRepository(EFCoreContext context) {
         Context = context;
     }
 
     public virtual async Task<TEntity?> FindById(ID id) {
-        var entity = await Entities.FindAsync(id);
+        var entity = await Entities.FirstOrDefaultAsync(e => e.Id.Equals(id));
         if (entity is ISoftDeletable { IsDeleted: true }) {
             return null;
         }
@@ -22,7 +22,7 @@ public abstract class GenericRepository<ID, TEntity> : IRepository<ID, TEntity> 
     }
 
     public virtual async Task<TEntity?> FindDeletedById(ID id) {
-        var entity = await Entities.FindAsync(id);
+        var entity = await Entities.FirstOrDefaultAsync(e => e.Id.Equals(id));
         if (entity is ISoftDeletable { IsDeleted: true }) {
             return entity;
         }
@@ -50,7 +50,7 @@ public abstract class GenericRepository<ID, TEntity> : IRepository<ID, TEntity> 
     }
 
     public virtual void Add(TEntity entity) {
-        Entities.Add(entity);
+        Context.Set<TEntity>().Add(entity);
     }
 
     public virtual void Delete(TEntity entity) {
@@ -63,6 +63,6 @@ public abstract class GenericRepository<ID, TEntity> : IRepository<ID, TEntity> 
     }
 
     public virtual void Purge(TEntity entity) {
-        Entities.Remove(entity);
+        Context.Set<TEntity>().Remove(entity);
     }
 }

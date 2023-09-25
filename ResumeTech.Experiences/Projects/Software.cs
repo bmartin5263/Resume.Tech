@@ -21,9 +21,11 @@ public class Software : IProject, IEntity<SoftwareId> {
     // Default Constructor Needed for Persistence
     private Software() {
         Name = null!;
+        Dates = null!;
     }
 
     public Software(string name) {
         Name = name;
+        Dates = new DateOnlyRange(Start: null);
     }
 }

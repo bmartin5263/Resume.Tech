@@ -2,10 +2,10 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using ResumeTech.Application.Util;
 using ResumeTech.Common.Actions;
-using ResumeTech.Common.Exceptions;
 using ResumeTech.Common.Utility;
 using ResumeTech.Experiences.Jobs;
-using ResumeTech.Experiences.Jobs.Cqs;
+using ResumeTech.Experiences.Jobs.Actions;
+using ResumeTech.Experiences.Jobs.Dto;
 
 namespace ResumeTech.Application.Controllers;
 

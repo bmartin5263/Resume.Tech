@@ -1,6 +1,6 @@
 using System.Net;
 using ResumeTech.Common.Domain;
-using ResumeTech.Common.Exceptions;
+using ResumeTech.Common.Error;
 
 namespace ResumeTech.Application.Util; 
 

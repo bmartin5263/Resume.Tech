@@ -1,5 +1,7 @@
+using System.ComponentModel.DataAnnotations;
 using System.Net;
 using System.Reflection;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging.Console;
 using ResumeTech.Application.Cqs;
 using ResumeTech.Application.Middleware;
@@ -7,7 +9,7 @@ using ResumeTech.Application.Serialization;
 using ResumeTech.Application.Util;
 using ResumeTech.Common.Actions;
 using ResumeTech.Common.Auth;
-using ResumeTech.Common.Exceptions;
+using ResumeTech.Common.Error;
 using ResumeTech.Common.Options;
 using ResumeTech.Common.Utility;
 using ResumeTech.Identities.Users;
@@ -54,6 +56,34 @@ internal class Program {
                 options.UseUtcTimestamp = true;
             })
         );
+        
+        builder.Services.Configure<ApiBehaviorOptions>(o =>
+        {
+            o.InvalidModelStateResponseFactory = actionContext =>
+            {
+                var parameters = actionContext.ModelState;
+                var errorBuilder = AppError.Builder(HttpStatusCode.BadRequest);
+
+                foreach (var (key, value) in parameters) {
+                    foreach (var errorMessage in value.Errors.Select(e => e.ErrorMessage)) {
+                        if (errorMessage.EndsWith("is required.")) {
+                            errorBuilder.SubError(new AppSubError(
+                                Path: char.ToLowerInvariant(key[0]) + key[1..],
+                                Message: "Value is required"
+                            ));
+                        }
+                        else {
+                            errorBuilder.SubError(new AppSubError(
+                                Path: char.ToLowerInvariant(key[0]) + key[1..],
+                                Message: errorMessage
+                            ));
+                        }
+                    }
+                }
+
+                throw new AppException(errorBuilder.Build());
+            };
+        });
         
         var app = builder.Build();
         Logging.LoggerFactory = app.Services.GetRequiredService<ILoggerFactory>();

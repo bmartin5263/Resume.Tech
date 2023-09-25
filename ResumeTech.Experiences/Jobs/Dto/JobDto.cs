@@ -1,25 +1,30 @@
 using ResumeTech.Common.Auth;
+using ResumeTech.Experiences.Contacts;
 
-namespace ResumeTech.Experiences.Jobs; 
+namespace ResumeTech.Experiences.Jobs.Dto; 
 
 public sealed record JobDto(
     JobId Id = default,
-    UserId OwnerId = default,
     DateTimeOffset CreatedAt = default,
     DateTimeOffset? UpdatedAt = default,
     DateTimeOffset? DeletedAt = default,
-    string? Name = default
+    UserId? OwnerId = default,
+    string? CompanyName = default,
+    Location? Location = default,
+    IEnumerable<PositionDto>? Positions = default
 );
 
 public static class JobDtoUtil {
     public static JobDto ToDto(this Job job) {
         return new JobDto(
             Id: job.Id,
-            OwnerId: job.OwnerId,
             CreatedAt: job.CreatedAt,
             UpdatedAt: job.UpdatedAt,
             DeletedAt: job.DeletedAt,
-            Name: job.CompanyName
+            OwnerId: job.OwnerId,
+            CompanyName: job.CompanyName,
+            Location: job.Location,
+            Positions: job.Positions.Select(p => p.ToDto())
         );
     }
 }

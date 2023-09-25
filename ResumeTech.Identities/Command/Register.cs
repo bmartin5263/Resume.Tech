@@ -3,7 +3,7 @@ using System.Security.Claims;
 using Microsoft.Extensions.Logging;
 using ResumeTech.Common.Actions;
 using ResumeTech.Common.Auth;
-using ResumeTech.Common.Exceptions;
+using ResumeTech.Common.Error;
 using ResumeTech.Common.Options;
 using ResumeTech.Common.Utility;
 using ResumeTech.Identities.Domain;

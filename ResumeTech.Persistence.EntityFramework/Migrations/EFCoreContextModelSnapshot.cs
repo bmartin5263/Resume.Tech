@@ -179,6 +179,12 @@ namespace ResumeTech.Persistence.EntityFramework.Migrations
                     b.Property<DateTimeOffset?>("DeletedAt")
                         .HasColumnType("timestamp with time zone");
 
+                    b.Property<string>("Location")
+                        .IsRequired()
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("jsonb")
+                        .HasDefaultValueSql("'{}'::jsonb");
+
                     b.Property<Guid>("OwnerId")
                         .HasColumnType("uuid");
 
@@ -188,6 +194,39 @@ namespace ResumeTech.Persistence.EntityFramework.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("Job", (string)null);
+                });
+
+            modelBuilder.Entity("ResumeTech.Experiences.Jobs.Position", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .HasColumnType("uuid")
+                        .HasColumnName("PositionId");
+
+                    b.Property<string>("BulletPoints")
+                        .IsRequired()
+                        .HasColumnType("jsonb");
+
+                    b.Property<DateTimeOffset>("CreatedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("Description")
+                        .HasColumnType("text");
+
+                    b.Property<Guid>("JobId")
+                        .HasColumnType("uuid");
+
+                    b.Property<string>("Title")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<DateTimeOffset?>("UpdatedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("JobId");
+
+                    b.ToTable("Position", (string)null);
                 });
 
             modelBuilder.Entity("ResumeTech.Identities.Duende.Role", b =>
@@ -399,6 +438,39 @@ namespace ResumeTech.Persistence.EntityFramework.Migrations
                     b.ToTable("UserToken", (string)null);
                 });
 
+            modelBuilder.Entity("ResumeTech.Experiences.Jobs.Position", b =>
+                {
+                    b.HasOne("ResumeTech.Experiences.Jobs.Job", null)
+                        .WithMany("Positions")
+                        .HasForeignKey("JobId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.OwnsOne("ResumeTech.Experiences.Common.DateOnlyRange", "Dates", b1 =>
+                        {
+                            b1.Property<Guid>("PositionId")
+                                .HasColumnType("uuid");
+
+                            b1.Property<DateOnly?>("End")
+                                .HasColumnType("date")
+                                .HasColumnName("EndDate");
+
+                            b1.Property<DateOnly?>("Start")
+                                .HasColumnType("date")
+                                .HasColumnName("StartDate");
+
+                            b1.HasKey("PositionId");
+
+                            b1.ToTable("Position");
+
+                            b1.WithOwner()
+                                .HasForeignKey("PositionId");
+                        });
+
+                    b.Navigation("Dates")
+                        .IsRequired();
+                });
+
             modelBuilder.Entity("ResumeTech.Identities.Duende.RoleClaim", b =>
                 {
                     b.HasOne("ResumeTech.Identities.Duende.Role", null)
@@ -448,6 +520,11 @@ namespace ResumeTech.Persistence.EntityFramework.Migrations
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+                });
+
+            modelBuilder.Entity("ResumeTech.Experiences.Jobs.Job", b =>
+                {
+                    b.Navigation("Positions");
                 });
 #pragma warning restore 612, 618
         }

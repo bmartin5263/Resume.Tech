@@ -1,6 +1,6 @@
 using ResumeTech.Common.Actions;
+using ResumeTech.Common.Error;
 using ResumeTech.Common.Events;
-using ResumeTech.Common.Exceptions;
 using ResumeTech.Common.Utility;
 
 namespace ResumeTech.Application.Util; 
