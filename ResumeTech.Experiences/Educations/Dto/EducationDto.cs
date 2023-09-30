@@ -1,5 +1,4 @@
 using ResumeTech.Common.Auth;
-using ResumeTech.Experiences.Profiles;
 
 namespace ResumeTech.Experiences.Educations.Dto;
 

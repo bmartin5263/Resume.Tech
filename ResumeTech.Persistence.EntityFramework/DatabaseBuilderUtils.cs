@@ -99,6 +99,34 @@ public static class DatabaseBuilderUtils {
             .HasForeignKey(foreignKey);
     }
     
+    // No navigation property
+    public static ReferenceCollectionBuilder<P, C> OneToMany<P, C, PId>(
+        this ModelBuilder builder
+    ) 
+        where P : class, IEntity<PId>
+        where PId : IEntityId
+        where C : class 
+    {
+        var foreignKey = typeof(PId).Name;
+        return builder.OneToMany<P, C, PId>(foreignKey);
+    }
+    
+    // No navigation property
+    public static ReferenceCollectionBuilder<P, C> OneToMany<P, C, PId>(
+        this ModelBuilder builder,
+        string foreignKey
+    ) 
+        where P : class, IEntity<PId>
+        where PId : IEntityId
+        where C : class 
+    {
+        builder.Entity<C>().Property<PId>(foreignKey);
+        return builder.Entity<P>()
+            .HasMany<C>()
+            .WithOne()
+            .HasForeignKey(foreignKey);
+    }
+    
     public static OwnershipBuilder<P, C> OneToManyOwning<P, C, PId>(
         this ModelBuilder builder, 
         Expression<Func<P, IEnumerable<C>?>> navigationExpression

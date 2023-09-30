@@ -11,7 +11,6 @@ using ResumeTech.Experiences.Common;
 using ResumeTech.Experiences.Contacts;
 using ResumeTech.Experiences.Educations;
 using ResumeTech.Experiences.Jobs;
-using ResumeTech.Experiences.Profiles;
 using ResumeTech.Identities.Duende;
 using ResumeTech.Persistence.EntityFramework.Converter;
 using UserClaim = ResumeTech.Identities.Duende.UserClaim;
@@ -47,10 +46,9 @@ public class EFCoreContext :
         builder.Entity<UserRole>().ToTable("UserRole");
         builder.Entity<UserToken>().ToTable("UserToken");
         
-        builder.DefineTable<Profile>();
-        builder.OneToMany<Profile, ContactInfo, ProfileId>(u => u.ContactInfos).IsRequired().OnDelete(DeleteBehavior.Cascade);
-        builder.OneToMany<Profile, Education, ProfileId>(u => u.Educations).IsRequired().OnDelete(DeleteBehavior.Cascade);
-        builder.OneToMany<Profile, Job, ProfileId>(u => u.Jobs).IsRequired().OnDelete(DeleteBehavior.Cascade);
+        builder.OneToMany<User, ContactInfo, UserId>("OwnerId").IsRequired().OnDelete(DeleteBehavior.Cascade);
+        builder.OneToMany<User, Education, UserId>("OwnerId").IsRequired().OnDelete(DeleteBehavior.Cascade);
+        builder.OneToMany<User, Job, UserId>("OwnerId").IsRequired().OnDelete(DeleteBehavior.Cascade);
         
         builder.DefineTable<ContactInfo>();
         builder.Entity<ContactInfo>().HasJsonConversion(s => s.Links).HasDefaultValueSql("'[]'::jsonb");

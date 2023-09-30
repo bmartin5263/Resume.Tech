@@ -2,6 +2,6 @@ using ResumeTech.Common.Auth;
 
 namespace ResumeTech.Identities.Auth; 
 
-public interface IOwnedEntity<out T> {
-    T OwnerId { get; }
+public interface IOwnedEntity {
+    UserId OwnerId { get; }
 }

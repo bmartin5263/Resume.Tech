@@ -3,15 +3,14 @@ using ResumeTech.Common.Auth;
 using ResumeTech.Common.Domain;
 using ResumeTech.Common.Utility;
 using ResumeTech.Experiences.Contacts;
-using ResumeTech.Experiences.Profiles;
 using ResumeTech.Identities.Auth;
 
 namespace ResumeTech.Experiences.Jobs;
 
-public class Job : IEntity<JobId>, IAuditedEntity, ISoftDeletable, IOwnedEntity<ProfileId> {
+public class Job : IEntity<JobId>, IAuditedEntity, ISoftDeletable, IOwnedEntity {
     public const int MaxFieldLength = 80;
 
-    public ProfileId OwnerId { get; private set; }
+    public UserId OwnerId { get; private set; }
     public string CompanyName { get; set; }
     public Location Location { get; set; }
     public IList<Position> Positions { get; } = new List<Position>();
@@ -28,7 +27,7 @@ public class Job : IEntity<JobId>, IAuditedEntity, ISoftDeletable, IOwnedEntity<
         Location = null!;
     }
 
-    public Job(ProfileId OwnerId, string CompanyName, IEnumerable<Position> Positions, Location? Location = null) {
+    public Job(UserId OwnerId, string CompanyName, IEnumerable<Position> Positions, Location? Location = null) {
         this.OwnerId = OwnerId;
         this.CompanyName = CompanyName.AssertMaxTrimmedLength(MaxFieldLength, "companyName");
         this.Location = Location ?? new Location();
