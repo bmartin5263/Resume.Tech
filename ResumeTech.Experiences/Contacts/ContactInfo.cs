@@ -1,4 +1,5 @@
 using ResumeTech.Common.Attributes;
+using ResumeTech.Common.Auth;
 using ResumeTech.Common.Domain;
 using ResumeTech.Common.Utility;
 

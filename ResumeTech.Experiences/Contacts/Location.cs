@@ -9,6 +9,10 @@ public sealed record Location {
     public string? State { get; }
     public string? Country { get; }
 
+    private Location() {
+        
+    }
+
     public Location(string? City = null, string? State = null, string? Country = null) {
         this.City = City?.AssertMaxTrimmedLength(MaxFieldLength, "City");
         this.State = State?.AssertMaxTrimmedLength(MaxFieldLength, "State");

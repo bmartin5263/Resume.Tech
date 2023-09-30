@@ -2,7 +2,7 @@ using ResumeTech.Common.Utility;
 
 namespace ResumeTech.Experiences.Educations;
 
-public readonly record struct Gpa {
+public record Gpa {
     public decimal Value { get; init; }
     public decimal Scale { get; init; }
 

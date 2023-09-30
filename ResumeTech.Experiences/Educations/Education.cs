@@ -1,21 +1,19 @@
+using ResumeTech.Common.Auth;
 using ResumeTech.Common.Domain;
 using ResumeTech.Experiences.Common;
 using ResumeTech.Experiences.Contacts;
 
 namespace ResumeTech.Experiences.Educations;
 
+// TODO: Rename to Degree?
 public class Education : IEntity<EducationId>, IAuditedEntity, ISoftDeletable {
-    
+    public UserId OwnerId { get; private set; }
+
     public string Name { get; set; }
-
     public Location Location { get; set; } = new();
-    
     public DegreeType DegreeType { get; set; }
-
     public string AreaOfStudy { get; set; }
-    
     public Gpa? Gpa { get; set; }
-    
     public IList<BulletPoint> BulletPoints { get; set; } = new List<BulletPoint>();
 
     // Common Entity Properties

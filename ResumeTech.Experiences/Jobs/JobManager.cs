@@ -1,26 +1,37 @@
 using ResumeTech.Common.Auth;
 using ResumeTech.Common.Utility;
 using ResumeTech.Experiences.Jobs.Dto;
+using ResumeTech.Experiences.Profiles;
 using ResumeTech.Identities.Auth;
 
 namespace ResumeTech.Experiences.Jobs; 
 
 public class JobManager {
+    private SecureRepository<ProfileId, Profile, IProfileRepository> ProfileRepository { get; }
     private SecureRepository<JobId, Job, IJobRepository> JobRepository { get; }
 
-    public JobManager(IJobRepository jobRepository, Authorizer<Job> authorizer) {
-        JobRepository = new SecureRepository<JobId, Job, IJobRepository>(jobRepository, authorizer);
+    public JobManager(
+        IProfileRepository profileRepository, 
+        IJobRepository jobRepository, 
+        Authorizer<Job> jobAuthorizer,
+        Authorizer<Profile> profileAuthorizer
+    ) {
+        ProfileRepository =
+            new SecureRepository<ProfileId, Profile, IProfileRepository>(profileRepository, profileAuthorizer);
+        JobRepository = new SecureRepository<JobId, Job, IJobRepository>(jobRepository, jobAuthorizer);
     }
 
-    public JobDto CreateJob(CreateJobRequest request) {
+    public async Task<JobDto> CreateJob(CreateJobRequest request) {
         var userId = JobRepository.CurrentUserId;
+        var profile = (await ProfileRepository.ReadNullable(r => r.FindByUserId(userId))).OrElseThrow();
         
         var job = new Job(
-            OwnerId: userId,
+            OwnerId: profile.Id,
             Location: request.Location,
             CompanyName: request.CompanyName,
             Positions: request.Positions.Select(p => p.ToEntity())
         );
+        
         JobRepository.Add(job);
         return job.ToDto();
     }

@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 using ResumeTech.Persistence.EntityFramework;
@@ -11,9 +12,11 @@ using ResumeTech.Persistence.EntityFramework;
 namespace ResumeTech.Persistence.EntityFramework.Migrations
 {
     [DbContext(typeof(EFCoreContext))]
-    partial class EFCoreContextModelSnapshot : ModelSnapshot
+    [Migration("20230924232220_AddJobLocation")]
+    partial class AddJobLocation
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -163,81 +166,6 @@ namespace ResumeTech.Persistence.EntityFramework.Migrations
                     b.ToTable("PersistedGrants", (string)null);
                 });
 
-            modelBuilder.Entity("ResumeTech.Experiences.Contacts.ContactInfo", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .HasColumnType("uuid")
-                        .HasColumnName("ContactInfoId");
-
-                    b.Property<DateTimeOffset>("CreatedAt")
-                        .HasColumnType("timestamp with time zone");
-
-                    b.Property<DateTimeOffset?>("DeletedAt")
-                        .HasColumnType("timestamp with time zone");
-
-                    b.Property<string>("Links")
-                        .IsRequired()
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("jsonb")
-                        .HasDefaultValueSql("'[]'::jsonb");
-
-                    b.Property<Guid>("ProfileId")
-                        .HasColumnType("uuid");
-
-                    b.Property<DateTimeOffset?>("UpdatedAt")
-                        .HasColumnType("timestamp with time zone");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("ProfileId");
-
-                    b.ToTable("ContactInfo", (string)null);
-                });
-
-            modelBuilder.Entity("ResumeTech.Experiences.Educations.Education", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .HasColumnType("uuid")
-                        .HasColumnName("EducationId");
-
-                    b.Property<string>("AreaOfStudy")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.Property<string>("BulletPoints")
-                        .IsRequired()
-                        .HasColumnType("jsonb");
-
-                    b.Property<DateTimeOffset>("CreatedAt")
-                        .HasColumnType("timestamp with time zone");
-
-                    b.Property<string>("DegreeType")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.Property<DateTimeOffset?>("DeletedAt")
-                        .HasColumnType("timestamp with time zone");
-
-                    b.Property<string>("Name")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.Property<Guid>("OwnerId")
-                        .HasColumnType("uuid");
-
-                    b.Property<Guid>("ProfileId")
-                        .HasColumnType("uuid");
-
-                    b.Property<DateTimeOffset?>("UpdatedAt")
-                        .HasColumnType("timestamp with time zone");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("ProfileId");
-
-                    b.ToTable("Education", (string)null);
-                });
-
             modelBuilder.Entity("ResumeTech.Experiences.Jobs.Job", b =>
                 {
                     b.Property<Guid>("Id")
@@ -254,18 +182,19 @@ namespace ResumeTech.Persistence.EntityFramework.Migrations
                     b.Property<DateTimeOffset?>("DeletedAt")
                         .HasColumnType("timestamp with time zone");
 
-                    b.Property<Guid>("OwnerId")
-                        .HasColumnType("uuid");
+                    b.Property<string>("Location")
+                        .IsRequired()
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("jsonb")
+                        .HasDefaultValueSql("'{}'::jsonb");
 
-                    b.Property<Guid>("ProfileId")
+                    b.Property<Guid>("OwnerId")
                         .HasColumnType("uuid");
 
                     b.Property<DateTimeOffset?>("UpdatedAt")
                         .HasColumnType("timestamp with time zone");
 
                     b.HasKey("Id");
-
-                    b.HasIndex("ProfileId");
 
                     b.ToTable("Job", (string)null);
                 });
@@ -278,12 +207,14 @@ namespace ResumeTech.Persistence.EntityFramework.Migrations
 
                     b.Property<string>("BulletPoints")
                         .IsRequired()
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("jsonb")
-                        .HasDefaultValueSql("'[]'::jsonb");
+                        .HasColumnType("jsonb");
 
                     b.Property<DateTimeOffset>("CreatedAt")
                         .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("Dates")
+                        .IsRequired()
+                        .HasColumnType("jsonb");
 
                     b.Property<string>("Description")
                         .HasColumnType("text");
@@ -303,29 +234,6 @@ namespace ResumeTech.Persistence.EntityFramework.Migrations
                     b.HasIndex("JobId");
 
                     b.ToTable("Position", (string)null);
-                });
-
-            modelBuilder.Entity("ResumeTech.Experiences.Profiles.Profile", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .HasColumnType("uuid")
-                        .HasColumnName("ProfileId");
-
-                    b.Property<DateTimeOffset>("CreatedAt")
-                        .HasColumnType("timestamp with time zone");
-
-                    b.Property<DateTimeOffset?>("DeletedAt")
-                        .HasColumnType("timestamp with time zone");
-
-                    b.Property<Guid>("OwnerId")
-                        .HasColumnType("uuid");
-
-                    b.Property<DateTimeOffset?>("UpdatedAt")
-                        .HasColumnType("timestamp with time zone");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("Profile", (string)null);
                 });
 
             modelBuilder.Entity("ResumeTech.Identities.Duende.Role", b =>
@@ -537,199 +445,12 @@ namespace ResumeTech.Persistence.EntityFramework.Migrations
                     b.ToTable("UserToken", (string)null);
                 });
 
-            modelBuilder.Entity("ResumeTech.Experiences.Contacts.ContactInfo", b =>
-                {
-                    b.HasOne("ResumeTech.Experiences.Profiles.Profile", null)
-                        .WithMany("ContactInfos")
-                        .HasForeignKey("ProfileId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.OwnsOne("ResumeTech.Experiences.Contacts.Location", "Location", b1 =>
-                        {
-                            b1.Property<Guid>("ContactInfoId")
-                                .HasColumnType("uuid");
-
-                            b1.Property<string>("City")
-                                .HasColumnType("text")
-                                .HasColumnName("City");
-
-                            b1.Property<string>("Country")
-                                .HasColumnType("text")
-                                .HasColumnName("Country");
-
-                            b1.Property<string>("State")
-                                .HasColumnType("text")
-                                .HasColumnName("State");
-
-                            b1.HasKey("ContactInfoId");
-
-                            b1.ToTable("ContactInfo");
-
-                            b1.WithOwner()
-                                .HasForeignKey("ContactInfoId");
-                        });
-
-                    b.OwnsOne("ResumeTech.Experiences.Contacts.PersonName", "Name", b1 =>
-                        {
-                            b1.Property<Guid>("ContactInfoId")
-                                .HasColumnType("uuid");
-
-                            b1.Property<string>("FirstName")
-                                .IsRequired()
-                                .HasColumnType("text")
-                                .HasColumnName("FirstName");
-
-                            b1.Property<string>("LastName")
-                                .HasColumnType("text")
-                                .HasColumnName("LastName");
-
-                            b1.Property<string>("MiddleName")
-                                .HasColumnType("text")
-                                .HasColumnName("MiddleName");
-
-                            b1.HasKey("ContactInfoId");
-
-                            b1.ToTable("ContactInfo");
-
-                            b1.WithOwner()
-                                .HasForeignKey("ContactInfoId");
-                        });
-
-                    b.Navigation("Location")
-                        .IsRequired();
-
-                    b.Navigation("Name")
-                        .IsRequired();
-                });
-
-            modelBuilder.Entity("ResumeTech.Experiences.Educations.Education", b =>
-                {
-                    b.HasOne("ResumeTech.Experiences.Profiles.Profile", null)
-                        .WithMany("Educations")
-                        .HasForeignKey("ProfileId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.OwnsOne("ResumeTech.Experiences.Contacts.Location", "Location", b1 =>
-                        {
-                            b1.Property<Guid>("EducationId")
-                                .HasColumnType("uuid");
-
-                            b1.Property<string>("City")
-                                .HasColumnType("text")
-                                .HasColumnName("City");
-
-                            b1.Property<string>("Country")
-                                .HasColumnType("text")
-                                .HasColumnName("Country");
-
-                            b1.Property<string>("State")
-                                .HasColumnType("text")
-                                .HasColumnName("State");
-
-                            b1.HasKey("EducationId");
-
-                            b1.ToTable("Education");
-
-                            b1.WithOwner()
-                                .HasForeignKey("EducationId");
-                        });
-
-                    b.OwnsOne("ResumeTech.Experiences.Educations.Gpa", "Gpa", b1 =>
-                        {
-                            b1.Property<Guid>("EducationId")
-                                .HasColumnType("uuid");
-
-                            b1.Property<decimal>("Scale")
-                                .HasColumnType("numeric")
-                                .HasColumnName("GpaScale");
-
-                            b1.Property<decimal>("Value")
-                                .HasColumnType("numeric")
-                                .HasColumnName("GpaValue");
-
-                            b1.HasKey("EducationId");
-
-                            b1.ToTable("Education");
-
-                            b1.WithOwner()
-                                .HasForeignKey("EducationId");
-                        });
-
-                    b.Navigation("Gpa");
-
-                    b.Navigation("Location")
-                        .IsRequired();
-                });
-
-            modelBuilder.Entity("ResumeTech.Experiences.Jobs.Job", b =>
-                {
-                    b.HasOne("ResumeTech.Experiences.Profiles.Profile", null)
-                        .WithMany("Jobs")
-                        .HasForeignKey("ProfileId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.OwnsOne("ResumeTech.Experiences.Contacts.Location", "Location", b1 =>
-                        {
-                            b1.Property<Guid>("JobId")
-                                .HasColumnType("uuid");
-
-                            b1.Property<string>("City")
-                                .HasColumnType("text")
-                                .HasColumnName("City");
-
-                            b1.Property<string>("Country")
-                                .HasColumnType("text")
-                                .HasColumnName("Country");
-
-                            b1.Property<string>("State")
-                                .HasColumnType("text")
-                                .HasColumnName("State");
-
-                            b1.HasKey("JobId");
-
-                            b1.ToTable("Job");
-
-                            b1.WithOwner()
-                                .HasForeignKey("JobId");
-                        });
-
-                    b.Navigation("Location")
-                        .IsRequired();
-                });
-
             modelBuilder.Entity("ResumeTech.Experiences.Jobs.Position", b =>
                 {
                     b.HasOne("ResumeTech.Experiences.Jobs.Job", null)
                         .WithMany("Positions")
                         .HasForeignKey("JobId")
                         .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.OwnsOne("ResumeTech.Experiences.Common.DateOnlyRange", "Dates", b1 =>
-                        {
-                            b1.Property<Guid>("PositionId")
-                                .HasColumnType("uuid");
-
-                            b1.Property<DateOnly?>("End")
-                                .HasColumnType("date")
-                                .HasColumnName("EndDate");
-
-                            b1.Property<DateOnly?>("Start")
-                                .HasColumnType("date")
-                                .HasColumnName("StartDate");
-
-                            b1.HasKey("PositionId");
-
-                            b1.ToTable("Position");
-
-                            b1.WithOwner()
-                                .HasForeignKey("PositionId");
-                        });
-
-                    b.Navigation("Dates")
                         .IsRequired();
                 });
 
@@ -787,15 +508,6 @@ namespace ResumeTech.Persistence.EntityFramework.Migrations
             modelBuilder.Entity("ResumeTech.Experiences.Jobs.Job", b =>
                 {
                     b.Navigation("Positions");
-                });
-
-            modelBuilder.Entity("ResumeTech.Experiences.Profiles.Profile", b =>
-                {
-                    b.Navigation("ContactInfos");
-
-                    b.Navigation("Educations");
-
-                    b.Navigation("Jobs");
                 });
 #pragma warning restore 612, 618
         }

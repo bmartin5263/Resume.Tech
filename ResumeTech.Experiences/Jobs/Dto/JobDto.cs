@@ -1,5 +1,6 @@
 using ResumeTech.Common.Auth;
 using ResumeTech.Experiences.Contacts;
+using ResumeTech.Experiences.Profiles;
 
 namespace ResumeTech.Experiences.Jobs.Dto; 
 
@@ -8,7 +9,7 @@ public sealed record JobDto(
     DateTimeOffset CreatedAt = default,
     DateTimeOffset? UpdatedAt = default,
     DateTimeOffset? DeletedAt = default,
-    UserId? OwnerId = default,
+    ProfileId? OwnerId = default,
     string? CompanyName = default,
     Location? Location = default,
     IEnumerable<PositionDto>? Positions = default

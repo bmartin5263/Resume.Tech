@@ -4,6 +4,7 @@ using ResumeTech.Common.Auth;
 using ResumeTech.Common.Events;
 using ResumeTech.Common.Utility;
 using ResumeTech.Experiences.Jobs;
+using ResumeTech.Experiences.Profiles;
 using ResumeTech.Identities.Auth;
 using ResumeTech.Identities.Auth.Filters;
 using ResumeTech.Identities.Domain;
@@ -60,7 +61,13 @@ public static class ServiceUtils {
         builder.Services.AddScoped<IUserManager, DuendeUserManager>();
         builder.Services.AddScoped<Authorizer<Job>>(s => new Authorizer<Job>(
             Filters: new List<IAccessFilter<Job>> {
-                new IsOwnerFilter<Job>()
+                new IsOwnerFilter<Job, ProfileId>()
+            },
+            UserDetailsProvider: s.GetRequiredService<IUserDetailsProvider>()
+        ));
+        builder.Services.AddScoped<Authorizer<Profile>>(s => new Authorizer<Profile>(
+            Filters: new List<IAccessFilter<Profile>> {
+                new IsOwnerFilter<Profile, UserId>()
             },
             UserDetailsProvider: s.GetRequiredService<IUserDetailsProvider>()
         ));

@@ -1,22 +1,25 @@
+using ResumeTech.Common.Auth;
 using ResumeTech.Common.Domain;
 using ResumeTech.Experiences.Common;
 using ResumeTech.Media.Domain;
 
 namespace ResumeTech.Experiences.Projects;
 
-public class Software : IProject, IEntity<SoftwareId> {
+public class Software : IProject {
+    public override UserId OwnerId { get; protected set; }
+
     public ISet<ImageRefId> Images { get; private set; } = new HashSet<ImageRefId>();
     
     // Common Project Properties
-    public string Name { get; set; }
-    public DateOnlyRange Dates { get; set; }
-    public IProjectId ProjectId => Id;
+    public sealed override string Name { get; set; }
+    public sealed override DateOnlyRange Dates { get; set; }
+    public override IProjectId ProjectId => Id;
 
     // Common Entity Properties
     public SoftwareId Id { get; private set; } = SoftwareId.Generate();
-    public DateTimeOffset CreatedAt { get; set; }
-    public DateTimeOffset? UpdatedAt { get; set; }
-    public DateTimeOffset? DeletedAt { get; set; }
+    public override DateTimeOffset CreatedAt { get; set; }
+    public override DateTimeOffset? UpdatedAt { get; set; }
+    public override DateTimeOffset? DeletedAt { get; set; }
 
     // Default Constructor Needed for Persistence
     private Software() {

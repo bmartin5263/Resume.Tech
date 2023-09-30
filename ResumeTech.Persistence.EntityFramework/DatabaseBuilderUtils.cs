@@ -71,6 +71,18 @@ public static class DatabaseBuilderUtils {
             .HasForeignKey(foreignKey);
     }
     
+    public static OwnershipBuilder<P, C> OneToManyOwning<P, C, PKey>(
+        this ModelBuilder builder, 
+        string foreignKey,
+        Expression<Func<P, IEnumerable<C>?>> navigationExpression
+    ) where P : class where C : class {
+        builder.Entity<C>().Property<PKey>(foreignKey);
+        return builder.Entity<P>()
+            .OwnsMany(navigationExpression)
+            .WithOwner()
+            .HasForeignKey(foreignKey);
+    }
+    
     public static ReferenceCollectionBuilder<P, C> OneToMany<P, C, PId>(
         this ModelBuilder builder, 
         Expression<Func<P, IEnumerable<C>?>> navigationExpression
@@ -85,5 +97,55 @@ public static class DatabaseBuilderUtils {
             .HasMany(navigationExpression)
             .WithOne()
             .HasForeignKey(foreignKey);
+    }
+    
+    public static OwnershipBuilder<P, C> OneToManyOwning<P, C, PId>(
+        this ModelBuilder builder, 
+        Expression<Func<P, IEnumerable<C>?>> navigationExpression
+    ) 
+        where P : class, IEntity<PId>
+        where PId : IEntityId
+        where C : class 
+    {
+        var foreignKey = typeof(PId).Name;
+        builder.Entity<C>().Property<PId>(foreignKey);
+        return builder.Entity<P>()
+            .OwnsMany(navigationExpression)
+            .WithOwner()
+            .HasForeignKey(foreignKey);
+    }
+    
+    public static ReferenceCollectionBuilder<P, C> OneToMany<P, C, PId>(
+        this ModelBuilder builder, 
+        Expression<Func<C, object?>> foreignKeyExpression,
+        Expression<Func<P, IEnumerable<C>?>> navigationExpression
+    ) 
+        where P : class, IEntity<PId>
+        where PId : IEntityId
+        where C : class 
+    {
+        var foreignKey = typeof(PId).Name;
+        builder.Entity<C>().Property<PId>(foreignKey);
+        return builder.Entity<P>()
+            .HasMany(navigationExpression)
+            .WithOne()
+            .HasForeignKey(foreignKeyExpression);
+    }
+    
+    public static OwnershipBuilder<P, C> OneToManyOwning<P, C, PId>(
+        this ModelBuilder builder, 
+        Expression<Func<C, object?>> foreignKeyExpression,
+        Expression<Func<P, IEnumerable<C>?>> navigationExpression
+    ) 
+        where P : class, IEntity<PId>
+        where PId : IEntityId
+        where C : class 
+    {
+        var foreignKey = typeof(PId).Name;
+        builder.Entity<C>().Property<PId>(foreignKey);
+        return builder.Entity<P>()
+            .OwnsMany(navigationExpression)
+            .WithOwner()
+            .HasForeignKey(foreignKeyExpression);
     }
 }

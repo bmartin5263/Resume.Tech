@@ -9,7 +9,9 @@ using ResumeTech.Common.Auth;
 using ResumeTech.Common.Domain;
 using ResumeTech.Experiences.Common;
 using ResumeTech.Experiences.Contacts;
+using ResumeTech.Experiences.Educations;
 using ResumeTech.Experiences.Jobs;
+using ResumeTech.Experiences.Profiles;
 using ResumeTech.Identities.Duende;
 using ResumeTech.Persistence.EntityFramework.Converter;
 using UserClaim = ResumeTech.Identities.Duende.UserClaim;
@@ -44,23 +46,69 @@ public class EFCoreContext :
         builder.Entity<UserLogin>().ToTable("UserLogin");
         builder.Entity<UserRole>().ToTable("UserRole");
         builder.Entity<UserToken>().ToTable("UserToken");
-
-        // builder.Entity<DateOnlyRange>().HasNoKey();
+        
+        builder.DefineTable<Profile>();
+        builder.OneToMany<Profile, ContactInfo, ProfileId>(u => u.ContactInfos).IsRequired().OnDelete(DeleteBehavior.Cascade);
+        builder.OneToMany<Profile, Education, ProfileId>(u => u.Educations).IsRequired().OnDelete(DeleteBehavior.Cascade);
+        builder.OneToMany<Profile, Job, ProfileId>(u => u.Jobs).IsRequired().OnDelete(DeleteBehavior.Cascade);
+        
+        builder.DefineTable<ContactInfo>();
+        builder.Entity<ContactInfo>().HasJsonConversion(s => s.Links).HasDefaultValueSql("'[]'::jsonb");
+        builder.Entity<ContactInfo>().OwnsOne<Location>(
+            o => o.Location,
+            sa =>
+            {
+                sa.Property(p => p.City).HasColumnName("City");
+                sa.Property(p => p.State).HasColumnName("State");
+                sa.Property(p => p.Country).HasColumnName("Country");
+            });
+        builder.Entity<ContactInfo>().OwnsOne<PersonName>(
+            o => o.Name,
+            sa =>
+            {
+                sa.Property(p => p.FirstName).HasColumnName("FirstName");
+                sa.Property(p => p.MiddleName).HasColumnName("MiddleName");
+                sa.Property(p => p.LastName).HasColumnName("LastName");
+            });
         
         builder.DefineTable<Job>();
         builder.OneToMany<Job, Position, JobId>(u => u.Positions).IsRequired().OnDelete(DeleteBehavior.Cascade);
-        builder.Entity<Job>().HasJsonConversion(s => s.Location).HasDefaultValueSql("'{}'::jsonb");
+        builder.Entity<Job>().OwnsOne<Location>(
+            o => o.Location,
+            sa =>
+            {
+                sa.Property(p => p.City).HasColumnName("City");
+                sa.Property(p => p.State).HasColumnName("State");
+                sa.Property(p => p.Country).HasColumnName("Country");
+            });
 
         builder.DefineTable<Position>();
-        builder.Entity<Position>().HasJsonConversion(s => s.BulletPoints);
-        builder.Entity<Position>().OwnsOne(
+        builder.Entity<Position>().HasJsonConversion(s => s.BulletPoints).HasDefaultValueSql("'[]'::jsonb");
+        builder.Entity<Position>().OwnsOne<DateOnlyRange>(
             o => o.Dates,
             sa =>
             {
                 sa.Property(p => p.Start).HasColumnName("StartDate");
                 sa.Property(p => p.End).HasColumnName("EndDate");
             });
-        // builder.Entity<Position>().HasJsonConversion(s => s.Dates);
+        
+        builder.DefineTable<Education>();
+        builder.Entity<Education>().HasJsonConversion(s => s.BulletPoints);
+        builder.Entity<Education>().OwnsOne<Gpa>(
+            o => o.Gpa,
+            sa =>
+            {
+                sa.Property(p => p.Scale).HasColumnName("GpaScale");
+                sa.Property(p => p.Value).HasColumnName("GpaValue");
+            });
+        builder.Entity<Education>().OwnsOne<Location>(
+            o => o.Location,
+            sa =>
+            {
+                sa.Property(p => p.City).HasColumnName("City");
+                sa.Property(p => p.State).HasColumnName("State");
+                sa.Property(p => p.Country).HasColumnName("Country");
+            });
     }
     
     protected override void ConfigureConventions(ModelConfigurationBuilder builder) {
@@ -68,9 +116,10 @@ public class EFCoreContext :
 
         foreach (var (wrapper, wrapee) in WrapperUtils.FindAllWrappedTypes("ResumeTech")) {
             var converter = typeof(WrapperConverter<,>).MakeGenericType(wrapper, wrapee);
-            builder.Properties(wrapper)
-                .HaveConversion(converter);
+            builder.Properties(wrapper).HaveConversion(converter);
         }
+        
+        builder.Properties<Enum>().HaveConversion<string>();
     }
     
     public override Task<int> SaveChangesAsync(CancellationToken cancellationToken = default) {

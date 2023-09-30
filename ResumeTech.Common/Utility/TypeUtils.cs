@@ -75,12 +75,12 @@ public static class TypeUtils {
     public static Type? GetInheritedGenericType(this Type type, Type genericType) {
         if (type.BaseType is not null
             && type.BaseType.IsGenericType
-            && type.BaseType.GetGenericTypeDefinition() == genericType) {
+            && type.BaseType.GetGenericTypeDefinition() == genericType) 
+        {
             return type.BaseType;
         }
         else {
-            return type.GetInterfaces()
-                .FirstOrDefault(i => i.IsGenericType && i.GetGenericTypeDefinition() == genericType);
+            return Array.Find(type.GetInterfaces(), i => i.IsGenericType && i.GetGenericTypeDefinition() == genericType);
         }
     }
     

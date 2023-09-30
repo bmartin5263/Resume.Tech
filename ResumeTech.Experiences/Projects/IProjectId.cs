@@ -2,6 +2,6 @@ using ResumeTech.Common.Domain;
 
 namespace ResumeTech.Experiences.Projects; 
 
-public interface IProjectId : IEntityId {
+public interface IProjectId : IEntityId, IWrapper<Guid> {
     
 }

@@ -13,6 +13,6 @@ public class CreateJob : Command<CreateJobRequest, JobDto> {
     }
 
     public override Task<JobDto> Run(CreateJobRequest args) {
-        return Task.FromResult(JobManager.CreateJob(args));
+        return JobManager.CreateJob(args);
     }
 }

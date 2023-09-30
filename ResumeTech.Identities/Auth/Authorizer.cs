@@ -9,7 +9,10 @@ public class Authorizer<TEntity> where TEntity : class {
     private IUserDetailsProvider UserDetailsProvider { get; }
     public UserDetails CurrentUser => UserDetailsProvider.CurrentUser;
 
-    public Authorizer(IList<IAccessFilter<TEntity>> Filters, IUserDetailsProvider UserDetailsProvider) {
+    public Authorizer(
+        IList<IAccessFilter<TEntity>> Filters, 
+        IUserDetailsProvider UserDetailsProvider
+    ) {
         this.Filters = Filters;
         this.UserDetailsProvider = UserDetailsProvider;
     }
@@ -20,7 +23,6 @@ public class Authorizer<TEntity> where TEntity : class {
         }
         return entity;
     }
-    
 
     public async Task<bool> CanRead(TEntity entity) {
         var user = UserDetailsProvider.CurrentUser;
@@ -32,9 +34,9 @@ public class Authorizer<TEntity> where TEntity : class {
         if (user.IsAdmin()) {
             return true;
         }
-        
+
         foreach (var filter in Filters) {
-            if (!await filter.CheckCanRead(userId.Value, entity)) {
+            if (!await filter.CheckCanRead(user, entity)) {
                 return false;
             }
         }
