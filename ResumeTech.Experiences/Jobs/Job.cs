@@ -17,7 +17,7 @@ public class Job : IEntity<JobId>, IAuditedEntity, ISoftDeletable, IOwnedEntity 
 
     // Common Entity Properties
     public JobId Id { get; private set; } = JobId.Generate();
-    public DateTimeOffset CreatedAt { get; set; }
+    public DateTimeOffset CreatedAt { get; set; } = DateTimeOffset.UtcNow;
     public DateTimeOffset? UpdatedAt { get; set; }
     public DateTimeOffset? DeletedAt { get; set; }
 

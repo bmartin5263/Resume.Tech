@@ -24,9 +24,9 @@ public class JobController : ControllerBase {
     /// <summary>
     /// Create a new Job
     /// </summary>
-    [Route(""), Route("{profileId}")]
+    [Route("")]
     [HttpPost]
-    public Task<JobDto> CreateJob([FromBody] CreateJobRequest request, string? profileId) {
+    public Task<JobDto> CreateJob([FromBody] CreateJobRequest request) {
         var command = UnitOfWork.GetService<CreateJob>();
         return Exec.Command(command, request);
     }

@@ -29,7 +29,6 @@
       <ProjectReference Include="..\ResumeTech.Experiences\ResumeTech.Experiences.csproj" />
       <ProjectReference Include="..\ResumeTech.Identities.Duende\ResumeTech.Identities.Duende.csproj" />
       <ProjectReference Include="..\ResumeTech.Persistence.EntityFramework\ResumeTech.Persistence.EntityFramework.csproj" />
-      <ProjectReference Include="..\ResumeTech.Persistence.InMemory\ResumeTech.Persistence.InMemory.csproj" />
     </ItemGroup>
 
 </Project>

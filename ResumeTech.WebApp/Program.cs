@@ -8,11 +8,9 @@ using ResumeTech.Application.Middleware;
 using ResumeTech.Application.Serialization;
 using ResumeTech.Application.Util;
 using ResumeTech.Common.Actions;
-using ResumeTech.Common.Auth;
 using ResumeTech.Common.Error;
 using ResumeTech.Common.Options;
 using ResumeTech.Common.Utility;
-using ResumeTech.Identities.Users;
 
 namespace ResumeTech.Application;
 
