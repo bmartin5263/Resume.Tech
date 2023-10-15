@@ -7,7 +7,7 @@ namespace ResumeTech.Identities.Command;
 
 public class CreateUser : Command<CreateUserRequest, UserDto> {
     public override string Name => "CreateUser";
-    public override RoleName[] Roles { get; } = { RoleName.Admin };
+    public override Roles UserRoles { get; } = Roles.AdminOnly();
 
     private IUserManager UserManager { get; }
 

@@ -12,7 +12,7 @@ public class Degree : IEntity<DegreeId>, IAuditedEntity, ISoftDeletable {
     private string institutionName = null!;
     public string InstitutionName {
         get => institutionName;
-        set => institutionName = value.AssertValid("institutionName");
+        set => institutionName = value.Validate("institutionName");
     }
     
     public Location Location { get; set; } = new();
@@ -22,13 +22,13 @@ public class Degree : IEntity<DegreeId>, IAuditedEntity, ISoftDeletable {
     private string? major;
     public string? Major {
         get => major;
-        set => major = value.AssertNullableValid("major");
+        set => major = value.ValidateNullable("major");
     }
     
     private string? minor;
     public string? Minor {
         get => minor;
-        set => minor = value.AssertNullableValid("minor");
+        set => minor = value.ValidateNullable("minor");
     }
     
     public Gpa? Gpa { get; set; }

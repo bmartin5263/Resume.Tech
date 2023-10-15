@@ -17,11 +17,11 @@ public class CreateJob : Command<CreateJobRequest, JobDto> {
 
     public override Task Validate(UserDetails user, CreateJobRequest args) {
         Validator<CreateJobRequest>.Create(args)
-            .Check(v => v.CompanyName.AssertValid("companyName"))
+            .Check(v => v.CompanyName.Validate("companyName"))
             .CheckCollection("positions", r => r.Positions, positions => positions
                 .Check(v => v.IsEmpty())
                 .CheckEach(position => position
-                    .Check(v => v.Title.AssertValid("title"))
+                    .Check(v => v.Title.Validate("title"))
                 )
             )
             .ThrowIfFailed();

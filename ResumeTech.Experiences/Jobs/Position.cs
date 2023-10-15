@@ -12,7 +12,7 @@ public sealed class Position : IEntity<PositionId>, IAuditedEntity, IEquatable<P
     private string title = null!;
     public string Title {
         get => title;
-        set => title = value.AssertValid("Title");
+        set => title = value.Validate("Title");
     }
     
     /// <summary>
@@ -24,10 +24,10 @@ public sealed class Position : IEntity<PositionId>, IAuditedEntity, IEquatable<P
     /// Long form description of what was done while in this position
     /// </summary>
     public const int MaxDescriptionLen = 500;
-    private string? description;
-    public string? Description {
+    private RichText? description;
+    public RichText? Description {
         get => description;
-        set => description = value.AssertNullableValid("Description", max: MaxDescriptionLen);
+        set => description = value.ValidateNullable("Description", max: MaxDescriptionLen);
     }
     
     /// <summary>
@@ -51,7 +51,7 @@ public sealed class Position : IEntity<PositionId>, IAuditedEntity, IEquatable<P
         string Title, 
         DateOnlyRange Dates, 
         IEnumerable<BulletPoint>? BulletPoints = null,
-        string? Description = null
+        RichText? Description = null
     ) {
         this.Title = Title;
         this.Dates = Dates;

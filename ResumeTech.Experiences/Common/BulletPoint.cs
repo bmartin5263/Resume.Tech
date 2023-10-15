@@ -8,7 +8,7 @@ public class BulletPoint : IEntity<BulletPointId> {
     private string text = null!;
     public string Text {
         get => text;
-        set => text = value.AssertValid("text");
+        set => text = value.Validate("text");
     }
 
     // Common Entity Properties

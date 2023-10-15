@@ -1,4 +1,5 @@
 using System.Net;
+using ResumeTech.Common.Domain;
 using ResumeTech.Common.Error;
 
 namespace ResumeTech.Common.Utility; 
@@ -7,7 +8,7 @@ public static class ValidationUtils {
     public const int DefaultMinFieldLen = 1;
     public const int DefaultMaxFieldLen = 255;
 
-    public static string AssertValid(
+    public static string Validate(
         this string? self,
         string field,
         bool trim = true,
@@ -30,8 +31,22 @@ public static class ValidationUtils {
 
         return self;
     }
-    
-    public static string? AssertNullableValid(
+
+    public static TWrapper Validate<TWrapper>(
+        this TWrapper? self,
+        string field,
+        bool trim = true,
+        int min = DefaultMinFieldLen,
+        int max = DefaultMaxFieldLen
+    ) where TWrapper : IWrapper<string> {
+        if (self == null) {
+            throw new AppError(UserMessage: $"{field} is required").ToException();
+        }
+        self.Value.Validate(field, trim, min, max);
+        return self;
+    }
+
+    public static string? ValidateNullable(
         this string? self,
         string field,
         bool trim = true,
@@ -41,7 +56,20 @@ public static class ValidationUtils {
         if (self == null) {
             return self;
         }
-        return self.AssertValid(field, trim, min, max);
+        return self.Validate(field, trim, min, max);
+    }
+    
+    public static TWrapper? ValidateNullable<TWrapper>(
+        this TWrapper? self,
+        string field,
+        bool trim = true,
+        int min = 1,
+        int max = 255
+    ) where TWrapper : IWrapper<string> {
+        if (self == null) {
+            return self;
+        }
+        return self.Validate(field, trim, min, max);
     }
 
     public static string AssertMaxTrimmedLength(this string self, int max, string fieldName) {

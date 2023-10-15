@@ -14,7 +14,7 @@ namespace ResumeTech.Identities.Command;
 public class Register : Command<RegisterParameters, UserDto> {
     private static readonly ILogger Log = Logging.CreateLogger<Register>();
     public override string Name => "Register";
-    public override RoleName[] Roles { get; } = Array.Empty<RoleName>();
+    public override Roles UserRoles { get; } = Roles.Public();
 
     private IUserManager UserManager { get; }
     private UserOptions UserOptions { get; }

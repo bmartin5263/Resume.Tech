@@ -7,7 +7,7 @@ namespace ResumeTech.Application.Cqs;
 
 public class InitializeApp : PureCommand {
     public override string Name => "Initialize";
-    public override RoleName[] Roles { get; } = Array.Empty<RoleName>();
+    public override Roles UserRoles { get; } = Roles.AdminOnly();
     
     private IUserManager UserManager { get; }
 

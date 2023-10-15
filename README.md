@@ -113,13 +113,13 @@ Validation can be found in 3 layers of the system. It may seem redundant to vali
 
 #### Service-level Validation
 This is validation that occurs on requests that get fed into Commands and Queries. 
-These validations can potentially be documented automatically in the OpenAPI Schema.
+These validations can potentially be documented automatically in the OpenAPI Schema if the API maps directly to a Command or Query
 All errors in the request should be returned at once, with pathname equivalent to the request structure
 
 #### Domain-level Validation
 This is validation that occurs on Entities and Value Objects, during construction and while updating.
 These validations ensure that at no point during processing will an object be in an invalid state
-Validation should be automatic (avoid separate `Validate()` calls) and should fail-fast (don't attempt to aggregate errors)
+These should occur automatically when setting illegal values to properties
 
 #### Database-level Validation
 This is validation that occurs on the database.

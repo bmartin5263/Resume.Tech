@@ -10,8 +10,8 @@ namespace ResumeTech.Identities.Command;
 
 public class Login : Command<LoginParameters, LoginResponse> {
     private static readonly ILogger Log = Logging.CreateLogger<Login>();
-    public override string Name => "Login";
-    public override RoleName[] Roles { get; } = Array.Empty<RoleName>();
+    public override string Name => "Login"; 
+    public override Roles UserRoles { get; } = Roles.Public();
 
     private IUserManager UserManager { get; }
     private IJwtMinter JwtMinter { get; }

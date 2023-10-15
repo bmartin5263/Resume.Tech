@@ -1,3 +1,4 @@
+using ResumeTech.Common.Domain;
 using ResumeTech.Experiences.Common;
 
 namespace ResumeTech.Experiences.Jobs.Dto;
@@ -8,7 +9,7 @@ public sealed record PositionDto(
     DateTimeOffset? UpdatedAt = default,
     string? Title = default,
     DateOnlyRange? Dates = default,
-    string? Description = default,
+    RichText? Description = default,
     IList<BulletPoint>? BulletPoints = default
 );
 

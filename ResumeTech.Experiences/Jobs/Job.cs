@@ -15,7 +15,7 @@ public sealed class Job : IEntity<JobId>, IAuditedEntity, ISoftDeletable, IEquat
     private string companyName = null!;
     public string CompanyName {
         get => companyName;
-        set => companyName = value.AssertValid("Company Name");
+        set => companyName = value.Validate("Company Name");
     }
     
     public Location Location { get; set; }

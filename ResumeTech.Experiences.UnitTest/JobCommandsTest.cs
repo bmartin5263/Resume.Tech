@@ -41,7 +41,7 @@ public class JobCommandsTest {
             }
         ));
         
-        Assert.True(result.RecursiveEquals(new JobDto(
+        Assert.That(result.RecursiveEquals(new JobDto(
             OwnerId: UserDetails.SystemUser.Id,
             CompanyName: "Jewel",
             Location: new Location(),
@@ -55,7 +55,6 @@ public class JobCommandsTest {
                     }
                 )
             }
-        ), "Id", "CreatedAt", "UpdatedAt", "DeletedAt"));
-        Assert.That(result.CompanyName, Is.EqualTo("Jewel"));
+        ), "Id", "CreatedAt", "UpdatedAt", "DeletedAt"), Is.True);
     }
 }

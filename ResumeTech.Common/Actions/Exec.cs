@@ -52,7 +52,7 @@ public class Exec {
     
     public Task<O?> RunCommand<I, O>(Command<I?, O?> command, I? args) {
         var logPolicy = command.LogPolicy;
-        Log.LogInformation($"Executing Command {command.Name} with Log Policy {logPolicy}");
+        Log.LogInformation("Executing Command {CommandName} with Log Policy {LogPolicy}", command.Name, logPolicy);
         return RunCommandWithoutLogging(command, args);
     }
 
@@ -64,18 +64,13 @@ public class Exec {
         if (user.Id == null) {
             throw new AccessDeniedException("Not logged in", HttpStatusCode.Unauthorized);
         }
-
-        RoleName[] commandRoles = command.Roles;
-        if (!commandRoles.ContainsAny(user.Roles)) {
-            throw new AccessDeniedException(
-                $"Required Role: {commandRoles.ToExpandedString()}, {user.Username} has roles {user.Roles.ToExpandedString()}"
-            );
-        }
+        
+        command.UserRoles.Authorize(user);
     }
     
     private async Task<O?> RunCommandWithoutLogging<I, O>(Command<I?, O?> command, I? args) {
         var user = UserDetailsProvider.CurrentUser;
-        var username = user.Id?.Value.ToString("N") ?? "Anonymous";
+        var username = user.Username ?? "Anonymous";
         Log.LogInformation($"{username} is executing Command {command.Name}");
 
         Authenticate(command, user);

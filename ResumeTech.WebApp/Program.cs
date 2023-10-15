@@ -8,6 +8,7 @@ using ResumeTech.Application.Middleware;
 using ResumeTech.Application.Serialization;
 using ResumeTech.Application.Util;
 using ResumeTech.Common.Actions;
+using ResumeTech.Common.Auth;
 using ResumeTech.Common.Error;
 using ResumeTech.Common.Options;
 using ResumeTech.Common.Utility;
@@ -102,6 +103,9 @@ internal class Program {
         Console.WriteLine("Initializing");
 
         var exec = app.Services.GetRequiredService<Exec>();
+        var userDetailsProvider = app.Services.GetRequiredService<IUserDetailsProvider>();
+        userDetailsProvider.Set(UserDetails.SystemUser);
+        
         var unitOfWork = app.Services.GetRequiredService<IUnitOfWork>();
         await exec.Command(unitOfWork.GetService<InitializeApp>());
 

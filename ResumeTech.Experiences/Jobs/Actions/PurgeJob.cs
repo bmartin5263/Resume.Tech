@@ -6,7 +6,7 @@ namespace ResumeTech.Experiences.Jobs.Actions;
 
 public class PurgeJob : PureCommand<DeleteJobRequest> {
     public override string Name => "PurgeJob";
-    public override RoleName[] Roles { get; } = { RoleName.Admin };
+    public override Roles UserRoles => Roles.AdminOnly();
     
     private JobManager JobManager { get; }
 
