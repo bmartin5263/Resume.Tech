@@ -13,4 +13,8 @@
       <ProjectReference Include="..\ResumeTech.Media\ResumeTech.Media.csproj" />
     </ItemGroup>
 
+    <ItemGroup>
+      <Folder Include="Education\Certificates" />
+    </ItemGroup>
+
 </Project>

@@ -9,8 +9,11 @@ public static class CompareUtils {
       var unequalProperties = new List<UnequalProperty>();
       var ignoreList = ignore.ToList();
       actual.RecursiveEquals(expected, typeof(T), unequalProperties, ignoreList);
+      if (unequalProperties.IsEmpty()) {
+         return true;
+      }
       Console.WriteLine(unequalProperties.ToExpandedString());
-      return !unequalProperties.Any();
+      return false;
    }
    
    private static void RecursiveEquals(this object actual, object expected, Type type, IList<UnequalProperty> unequalProperties, IList<string> ignore) {
@@ -28,10 +31,10 @@ public static class CompareUtils {
          }
          else {
             if (expectedValue == null && actualValue != null) {
-               unequalProperties.Add(new (property.Name, expectedValue, actualValue));
+               unequalProperties.Add(new UnequalProperty(property.Name, expectedValue, actualValue));
             }
             else if (expectedValue != null && actualValue == null) {
-               unequalProperties.Add(new (property.Name, expectedValue, actualValue));
+               unequalProperties.Add(new UnequalProperty(property.Name, expectedValue, actualValue));
             }
             else if (expectedValue != null && actualValue != null) {
                RecursiveEquals(actualValue, expectedValue, propertyType, unequalProperties, ignore);
@@ -45,8 +48,7 @@ public static class CompareUtils {
    /// or complex (i.e. custom class with public properties and methods).
    /// </summary>
    /// <see cref="http://stackoverflow.com/questions/2442534/how-to-test-if-type-is-primitive"/>
-   public static bool IsSimpleType(
-      this Type type)
+   public static bool IsSimpleType(this Type type)
    {
       return
          type.IsValueType ||

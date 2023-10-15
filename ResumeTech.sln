@@ -24,6 +24,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ResumeTech.Experiences.Unit
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ResumeTech.TestUtil", "ResumeTech.TestUtil\ResumeTech.TestUtil.csproj", "{A2D4F8AA-CE25-422A-91D3-2C6E3E014A60}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ResumeTech.Organization.UnitTest", "ResumeTech.Organization.UnitTest\ResumeTech.Organization.UnitTest.csproj", "{0A6309BC-547D-4AD7-9B77-282719D9DA9A}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -78,5 +80,9 @@ Global
 		{A2D4F8AA-CE25-422A-91D3-2C6E3E014A60}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{A2D4F8AA-CE25-422A-91D3-2C6E3E014A60}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{A2D4F8AA-CE25-422A-91D3-2C6E3E014A60}.Release|Any CPU.Build.0 = Release|Any CPU
+		{0A6309BC-547D-4AD7-9B77-282719D9DA9A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{0A6309BC-547D-4AD7-9B77-282719D9DA9A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{0A6309BC-547D-4AD7-9B77-282719D9DA9A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{0A6309BC-547D-4AD7-9B77-282719D9DA9A}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal

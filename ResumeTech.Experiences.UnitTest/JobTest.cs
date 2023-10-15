@@ -44,4 +44,43 @@ public class JobTest {
             Assert.That(position.Title, Is.EqualTo("Bagger"));
         });
     }
+
+    [Test]
+    public void EqualsTest() {
+        var position1 = new Position(Title: "Software Bagger", Dates: new DateOnlyRange(Clock.Now, Clock.Now)) {
+            BulletPoints = {
+                new BulletPoint("Some bullet point")
+            }
+        };
+        var position2 = new Position(Title: "Software Bagger", Dates: new DateOnlyRange(Clock.Now, Clock.Now)) {
+            BulletPoints = {
+                new BulletPoint("Some bullet point")
+            }
+        };
+        
+        var job1 = new Job(OwnerId: UserId.Generate(), CompanyName: "Jewel", Positions: new[] { position1 });
+        var job2 = new Job(OwnerId: UserId.Generate(), CompanyName: "Jewel", Positions: new[] { position2 });
+        var someObject = new object();
+        
+        Assert.That(job1 == job2, Is.False);
+        Assert.That(job2 == job1, Is.False);
+        Assert.That(job1 != job2, Is.True);
+        Assert.That(job2 != job1, Is.True);
+        Assert.That(job1.Equals(job1), Is.True);
+        Assert.That(job2.Equals(job2), Is.True);
+        Assert.That(job1.Equals(job2), Is.False);
+        Assert.That(job2.Equals(job1), Is.False);
+        Assert.That(job1.Equals(someObject), Is.False);
+        Assert.That(job2.Equals(someObject), Is.False);
+        Assert.That(job1.Equals(null), Is.False);
+        Assert.That(job2.Equals(null), Is.False);
+        Assert.That(job1 == null, Is.False);
+        Assert.That(job2 == null, Is.False);
+        Assert.That(job1 != null, Is.True);
+        Assert.That(job2 != null, Is.True);
+        Assert.That(null == job1, Is.False);
+        Assert.That(null == job2, Is.False);
+        Assert.That(null != job1, Is.True);
+        Assert.That(null != job2, Is.True);
+    }
 }

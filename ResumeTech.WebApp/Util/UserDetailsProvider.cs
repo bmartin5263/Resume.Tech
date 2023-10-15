@@ -6,7 +6,8 @@ namespace ResumeTech.Application.Util;
 
 public class UserDetailsProvider : IUserDetailsProvider {
     private static readonly ILogger Log = Logging.CreateLogger<UserDetailsProvider>();
-    public UserDetails CurrentUser { get; }
+    public UserDetails CurrentUser { get; set; }
+    public UserId CurrentUserId => CurrentUser.Id.OrElseThrow("No User Id, not logged in.")!.Value;
 
     public UserDetailsProvider(IHttpContextAccessor httpContextAccessor) {
         HttpContext? context = httpContextAccessor.HttpContext;
@@ -39,6 +40,9 @@ public class UserDetailsProvider : IUserDetailsProvider {
     }
 
     public void Set(UserDetails details) {
-        throw new InvalidOperationException("Cannot set UserId twice");
+        if (CurrentUser.Id != null) {
+            throw new InvalidOperationException("Cannot set UserId twice");
+        }
+        CurrentUser = details;
     }
 }

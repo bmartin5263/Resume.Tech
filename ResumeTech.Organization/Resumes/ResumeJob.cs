@@ -1,4 +1,6 @@
 using ResumeTech.Common.Domain;
+using ResumeTech.Common.Error;
+using ResumeTech.Common.Utility;
 using ResumeTech.Experiences.Common;
 using ResumeTech.Experiences.Jobs;
 
@@ -6,7 +8,7 @@ namespace ResumeTech.Organization.Resumes;
 
 public class ResumeJob : IEntity<ResumeJobId>, IAuditedEntity {
     public JobId JobId { get; set; }
-    public ISet<BulletPointId> ExcludeBulletPoints { get; set; } = new HashSet<BulletPointId>();
+    public IList<ResumePosition> ResumePositions { get; set; }
 
     // Common Entity Properties
     public ResumeJobId Id { get; private set; } = ResumeJobId.Generate();
@@ -15,11 +17,15 @@ public class ResumeJob : IEntity<ResumeJobId>, IAuditedEntity {
 
     // Default Constructor Needed for Persistence
     private ResumeJob() {
-        
+        ResumePositions = new List<ResumePosition>();
     }
 
-    public ResumeJob(JobId JobId, IEnumerable<BulletPointId>? ExcludeBulletPoints = null) {
+    public ResumeJob(JobId JobId, IEnumerable<ResumePosition> Positions) {
         this.JobId = JobId;
-        this.ExcludeBulletPoints = new HashSet<BulletPointId>(ExcludeBulletPoints ?? Array.Empty<BulletPointId>());
+        this.ResumePositions = new List<ResumePosition>(Positions);
+
+        if (this.ResumePositions.IsEmpty()) {
+            throw new ArgumentException("Must provide at least one Position");
+        }
     }
 }

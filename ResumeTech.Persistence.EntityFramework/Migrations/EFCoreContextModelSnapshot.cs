@@ -163,6 +163,44 @@ namespace ResumeTech.Persistence.EntityFramework.Migrations
                     b.ToTable("PersistedGrants", (string)null);
                 });
 
+            modelBuilder.Entity("ResumeTech.Common.Domain.Tag", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .HasColumnType("uuid");
+
+                    b.Property<Guid?>("JobId")
+                        .HasColumnType("uuid");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("JobId");
+
+                    b.ToTable("Tag");
+                });
+
+            modelBuilder.Entity("ResumeTech.Experiences.Common.Skill", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .HasColumnType("uuid");
+
+                    b.Property<Guid?>("JobId")
+                        .HasColumnType("uuid");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("JobId");
+
+                    b.ToTable("Skill");
+                });
+
             modelBuilder.Entity("ResumeTech.Experiences.Contacts.ContactInfo", b =>
                 {
                     b.Property<Guid>("Id")
@@ -194,15 +232,11 @@ namespace ResumeTech.Persistence.EntityFramework.Migrations
                     b.ToTable("ContactInfo", (string)null);
                 });
 
-            modelBuilder.Entity("ResumeTech.Experiences.Educations.Education", b =>
+            modelBuilder.Entity("ResumeTech.Experiences.Education.Degrees.Degree", b =>
                 {
                     b.Property<Guid>("Id")
                         .HasColumnType("uuid")
-                        .HasColumnName("EducationId");
-
-                    b.Property<string>("AreaOfStudy")
-                        .IsRequired()
-                        .HasColumnType("text");
+                        .HasColumnName("DegreeId");
 
                     b.Property<string>("BulletPoints")
                         .IsRequired()
@@ -218,8 +252,11 @@ namespace ResumeTech.Persistence.EntityFramework.Migrations
                     b.Property<DateTimeOffset?>("DeletedAt")
                         .HasColumnType("timestamp with time zone");
 
-                    b.Property<string>("Name")
+                    b.Property<string>("InstitutionName")
                         .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<string>("Major")
                         .HasColumnType("text");
 
                     b.Property<Guid>("OwnerId")
@@ -232,7 +269,7 @@ namespace ResumeTech.Persistence.EntityFramework.Migrations
 
                     b.HasIndex("OwnerId");
 
-                    b.ToTable("Education", (string)null);
+                    b.ToTable("Degree", (string)null);
                 });
 
             modelBuilder.Entity("ResumeTech.Experiences.Jobs.Job", b =>
@@ -508,6 +545,20 @@ namespace ResumeTech.Persistence.EntityFramework.Migrations
                     b.ToTable("UserToken", (string)null);
                 });
 
+            modelBuilder.Entity("ResumeTech.Common.Domain.Tag", b =>
+                {
+                    b.HasOne("ResumeTech.Experiences.Jobs.Job", null)
+                        .WithMany("Tags")
+                        .HasForeignKey("JobId");
+                });
+
+            modelBuilder.Entity("ResumeTech.Experiences.Common.Skill", b =>
+                {
+                    b.HasOne("ResumeTech.Experiences.Jobs.Job", null)
+                        .WithMany("Skills")
+                        .HasForeignKey("JobId");
+                });
+
             modelBuilder.Entity("ResumeTech.Experiences.Contacts.ContactInfo", b =>
                 {
                     b.HasOne("ResumeTech.Identities.Duende.User", null)
@@ -574,7 +625,7 @@ namespace ResumeTech.Persistence.EntityFramework.Migrations
                         .IsRequired();
                 });
 
-            modelBuilder.Entity("ResumeTech.Experiences.Educations.Education", b =>
+            modelBuilder.Entity("ResumeTech.Experiences.Education.Degrees.Degree", b =>
                 {
                     b.HasOne("ResumeTech.Identities.Duende.User", null)
                         .WithMany()
@@ -584,7 +635,7 @@ namespace ResumeTech.Persistence.EntityFramework.Migrations
 
                     b.OwnsOne("ResumeTech.Experiences.Contacts.Location", "Location", b1 =>
                         {
-                            b1.Property<Guid>("EducationId")
+                            b1.Property<Guid>("DegreeId")
                                 .HasColumnType("uuid");
 
                             b1.Property<string>("City")
@@ -599,17 +650,17 @@ namespace ResumeTech.Persistence.EntityFramework.Migrations
                                 .HasColumnType("text")
                                 .HasColumnName("State");
 
-                            b1.HasKey("EducationId");
+                            b1.HasKey("DegreeId");
 
-                            b1.ToTable("Education");
+                            b1.ToTable("Degree");
 
                             b1.WithOwner()
-                                .HasForeignKey("EducationId");
+                                .HasForeignKey("DegreeId");
                         });
 
-                    b.OwnsOne("ResumeTech.Experiences.Educations.Gpa", "Gpa", b1 =>
+                    b.OwnsOne("ResumeTech.Experiences.Education.Degrees.Gpa", "Gpa", b1 =>
                         {
-                            b1.Property<Guid>("EducationId")
+                            b1.Property<Guid>("DegreeId")
                                 .HasColumnType("uuid");
 
                             b1.Property<decimal>("Scale")
@@ -620,12 +671,12 @@ namespace ResumeTech.Persistence.EntityFramework.Migrations
                                 .HasColumnType("numeric")
                                 .HasColumnName("GpaValue");
 
-                            b1.HasKey("EducationId");
+                            b1.HasKey("DegreeId");
 
-                            b1.ToTable("Education");
+                            b1.ToTable("Degree");
 
                             b1.WithOwner()
-                                .HasForeignKey("EducationId");
+                                .HasForeignKey("DegreeId");
                         });
 
                     b.Navigation("Gpa");
@@ -758,6 +809,10 @@ namespace ResumeTech.Persistence.EntityFramework.Migrations
             modelBuilder.Entity("ResumeTech.Experiences.Jobs.Job", b =>
                 {
                     b.Navigation("Positions");
+
+                    b.Navigation("Skills");
+
+                    b.Navigation("Tags");
                 });
 #pragma warning restore 612, 618
         }

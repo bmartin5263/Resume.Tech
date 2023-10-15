@@ -107,3 +107,20 @@ To mark an entity as soft-deletable, have it should implement the interface `ISo
 
 Implementations of `IRepository<ID, TEntity>` should check if `TEntity` implements `ISoftDeletable` and take appropriate action.
 When soft-deleted, the entity should not be returned from any standard query method like `FindById`, `FindAll`, etc.
+
+### Validation
+Validation can be found in 3 layers of the system. It may seem redundant to validate in 3 layers but each one adds some sort of benefit
+
+#### Service-level Validation
+This is validation that occurs on requests that get fed into Commands and Queries. 
+These validations can potentially be documented automatically in the OpenAPI Schema.
+All errors in the request should be returned at once, with pathname equivalent to the request structure
+
+#### Domain-level Validation
+This is validation that occurs on Entities and Value Objects, during construction and while updating.
+These validations ensure that at no point during processing will an object be in an invalid state
+Validation should be automatic (avoid separate `Validate()` calls) and should fail-fast (don't attempt to aggregate errors)
+
+#### Database-level Validation
+This is validation that occurs on the database.
+These validations ensure database integrity when doing manual revisions

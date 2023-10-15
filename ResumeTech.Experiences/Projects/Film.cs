@@ -30,6 +30,6 @@ public class Film : IProject {
     public Film(string name, string title) {
         Name = name;
         Title = title;
-        Dates = new DateOnlyRange(Start: null);
+        Dates = new DateOnlyRange();
     }
 }

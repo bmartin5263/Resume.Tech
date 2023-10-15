@@ -1,19 +1,27 @@
 using ResumeTech.Common.Domain;
+using ResumeTech.Common.Utility;
 
 namespace ResumeTech.Experiences.Common;
 
 public class BulletPoint : IEntity<BulletPointId> {
-    public string Content { get; set; }
+
+    private string text = null!;
+    public string Text {
+        get => text;
+        set => text = value.AssertValid("text");
+    }
 
     // Common Entity Properties
     public BulletPointId Id { get; private set; } = BulletPointId.Generate();
     
     // Default Constructor Needed for Persistence
     private BulletPoint() {
-        Content = null!;
+        Text = null!;
     }
 
-    public BulletPoint(string content) {
-        Content = content;
+    public BulletPoint(string Text) {
+        this.Text = Text;
     }
+
+    // public static implicit operator BulletPoint(string str) => new(str);
 }

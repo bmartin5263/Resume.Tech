@@ -1,6 +1,7 @@
 using System.Collections.Immutable;
 using System.Net;
 using System.Text.Json.Serialization;
+using ResumeTech.Common.Utility;
 using static System.Text.Json.Serialization.JsonIgnoreCondition;
 
 namespace ResumeTech.Common.Error;
@@ -15,7 +16,7 @@ public sealed record AppSubError(string Path, string Message);
 public sealed record AppError {
     public Exception? CausedBy { get; }
     public HttpStatusCode StatusCode { get; }
-    public string UserMessage { get; }
+    public string? UserMessage { get; }
     public string? DeveloperMessage { get; }
     public IList<AppSubError> SubErrors { get; }
 
@@ -23,25 +24,16 @@ public sealed record AppError {
 
     public AppError(Exception? CausedBy = null, HttpStatusCode? StatusCode = null, string? UserMessage = null, string? DeveloperMessage = null, IList<AppSubError>? SubErrors = null) {
         this.CausedBy = CausedBy;
-        this.StatusCode = StatusCode ?? (UserMessage != null ? HttpStatusCode.BadRequest : HttpStatusCode.InternalServerError);
-        this.UserMessage = DetermineUserMessage(UserMessage, SubErrors);
-        this.DeveloperMessage = DeveloperMessage ?? CausedBy?.Message;
         this.SubErrors = SubErrors ?? ImmutableList<AppSubError>.Empty;
-    }
-
-    private static string DetermineUserMessage(string? userMessage, IList<AppSubError>? subErrors) {
-        if (userMessage != null) {
-            return userMessage;
-        }
-        return subErrors?.Count > 0 
-            ? "Multiple errors occurred" 
-            : "A system error has occurred. Please contact support@resumetech.io for Technical Support";
+        this.StatusCode = StatusCode ?? (UserMessage != null || this.SubErrors.IsNotEmpty() ? HttpStatusCode.BadRequest : HttpStatusCode.InternalServerError);
+        this.UserMessage = UserMessage;
+        this.DeveloperMessage = DeveloperMessage ?? CausedBy?.Message;
     }
 
     public AppErrorDto ToDto(string traceId, bool includeDevInfo) {
         return new AppErrorDto(
             CausedBy: includeDevInfo ? CausedBy?.GetType().Name : null,
-            UserMessage: UserMessage,
+            UserMessage: DetermineUserMessage(UserMessage, SubErrors),
             DeveloperMessage: includeDevInfo ? DeveloperMessage : null,
             SubErrors: SubErrors.Count == 0 ? null : SubErrors.Select(e => new AppSubErrorDto(
                 Path: e.Path,
@@ -49,6 +41,15 @@ public sealed record AppError {
             )).ToList(),
             TraceId: traceId
         );
+    }
+    
+    private static string DetermineUserMessage(string? userMessage, IList<AppSubError>? subErrors) {
+        if (userMessage != null) {
+            return userMessage;
+        }
+        return subErrors?.Count > 0 
+            ? "Multiple errors occurred" 
+            : "A system error has occurred. Please contact support@resumetech.io for Technical Support";
     }
 
     public static AppErrorBuilder Builder(HttpStatusCode statusCode) {

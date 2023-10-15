@@ -58,12 +58,6 @@ public static class ServiceUtils {
         builder.Services.AddScoped<Exec>();
         builder.Services.AddScoped<IUserDetailsProvider, UserDetailsProvider>();
         builder.Services.AddScoped<IUserManager, DuendeUserManager>();
-        builder.Services.AddScoped<Authorizer<Job>>(s => new Authorizer<Job>(
-            Filters: new List<IAccessFilter<Job>> {
-                new IsOwnerFilter<Job>()
-            },
-            UserDetailsProvider: s.GetRequiredService<IUserDetailsProvider>()
-        ));
 
         foreach (var action in commandsAndQueries) {
             builder.Services.AddScoped(action.BaseType.OrElseThrow("Missing base type for action"), action);

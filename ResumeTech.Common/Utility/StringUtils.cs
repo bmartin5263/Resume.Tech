@@ -4,6 +4,10 @@ namespace ResumeTech.Common.Utility;
 
 public static class StringUtils {
 
+    public static bool IsBlank(this string? str) {
+        return str == null || str.Trim().Length == 0;
+    }
+
     public static string ToExpandedString<T>(this IEnumerable<T>? enumerable) {
         if (enumerable == null) {
             return "[]";

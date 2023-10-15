@@ -9,7 +9,7 @@ using ResumeTech.Common.Auth;
 using ResumeTech.Common.Domain;
 using ResumeTech.Experiences.Common;
 using ResumeTech.Experiences.Contacts;
-using ResumeTech.Experiences.Educations;
+using ResumeTech.Experiences.Education.Degrees;
 using ResumeTech.Experiences.Jobs;
 using ResumeTech.Identities.Duende;
 using ResumeTech.Persistence.EntityFramework.Converter;
@@ -47,7 +47,7 @@ public class EFCoreContext :
         builder.Entity<UserToken>().ToTable("UserToken");
         
         builder.OneToMany<User, ContactInfo, UserId>("OwnerId").IsRequired().OnDelete(DeleteBehavior.Cascade);
-        builder.OneToMany<User, Education, UserId>("OwnerId").IsRequired().OnDelete(DeleteBehavior.Cascade);
+        builder.OneToMany<User, Degree, UserId>("OwnerId").IsRequired().OnDelete(DeleteBehavior.Cascade);
         builder.OneToMany<User, Job, UserId>("OwnerId").IsRequired().OnDelete(DeleteBehavior.Cascade);
         
         builder.DefineTable<ContactInfo>();
@@ -90,16 +90,16 @@ public class EFCoreContext :
                 sa.Property(p => p.End).HasColumnName("EndDate");
             });
         
-        builder.DefineTable<Education>();
-        builder.Entity<Education>().HasJsonConversion(s => s.BulletPoints);
-        builder.Entity<Education>().OwnsOne<Gpa>(
+        builder.DefineTable<Degree>();
+        builder.Entity<Degree>().HasJsonConversion(s => s.BulletPoints);
+        builder.Entity<Degree>().OwnsOne<Gpa>(
             o => o.Gpa,
             sa =>
             {
                 sa.Property(p => p.Scale).HasColumnName("GpaScale");
                 sa.Property(p => p.Value).HasColumnName("GpaValue");
             });
-        builder.Entity<Education>().OwnsOne<Location>(
+        builder.Entity<Degree>().OwnsOne<Location>(
             o => o.Location,
             sa =>
             {

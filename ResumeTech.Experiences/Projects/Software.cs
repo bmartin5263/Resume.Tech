@@ -29,6 +29,6 @@ public class Software : IProject {
 
     public Software(string name) {
         Name = name;
-        Dates = new DateOnlyRange(Start: null);
+        Dates = new DateOnlyRange();
     }
 }

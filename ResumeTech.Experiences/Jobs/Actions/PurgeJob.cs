@@ -15,6 +15,6 @@ public class PurgeJob : PureCommand<DeleteJobRequest> {
     }
 
     public override Task RunWithoutResult(DeleteJobRequest args) { 
-        return JobManager.PurgeJob(args);
+        return JobManager.DeleteJob(args, purge: true);
     }
 }

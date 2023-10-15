@@ -4,7 +4,7 @@ public sealed record DateOnlyRange {
     public DateOnly? Start { get; }
     public DateOnly? End { get; }
 
-    private DateOnlyRange() {
+    public DateOnlyRange() {
         Start = null;
         End = null;
     }
@@ -12,6 +12,12 @@ public sealed record DateOnlyRange {
     public DateOnlyRange(DateOnly? Start, DateOnly? End = null) {
         this.Start = Start;
         this.End = End;
+        Validate();
+    }
+
+    public DateOnlyRange(DateTimeOffset? Start, DateTimeOffset? End = null) {
+        this.Start = Start.HasValue ? DateOnly.FromDateTime(Start.Value.Date) : null;
+        this.End = End.HasValue ? DateOnly.FromDateTime(End.Value.Date) : null;;
         Validate();
     }
 
@@ -24,10 +30,7 @@ public sealed record DateOnlyRange {
         if (Start == null && End == null) {
             throw new ArgumentException("Missing both Start and End dates");
         }
-        if (End.HasValue && !Start.HasValue) {
-            throw new ArgumentException("Must provide and Start date when providing an End date");
-        }
-        if (Start > (End ?? DateOnly.MaxValue)) {
+        if (Start != null && End != null && Start > End) {
             throw new ArgumentException($"Start date {Start} cannot be after End date {End}");
         }
     }

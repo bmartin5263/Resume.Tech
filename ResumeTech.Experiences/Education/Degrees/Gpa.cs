@@ -1,6 +1,6 @@
 using ResumeTech.Common.Utility;
 
-namespace ResumeTech.Experiences.Educations;
+namespace ResumeTech.Experiences.Education.Degrees;
 
 public record Gpa {
     public decimal Value { get; init; }

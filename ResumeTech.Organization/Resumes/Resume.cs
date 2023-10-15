@@ -1,12 +1,12 @@
 using ResumeTech.Common.Domain;
+using ResumeTech.Common.Utility;
 using ResumeTech.Experiences.Contacts;
-using ResumeTech.Experiences.Educations;
 
 namespace ResumeTech.Organization.Resumes;
 
 public class Resume : IEntity<ResumeId>, IAuditedEntity, ISoftDeletable {
     /// <summary>
-    /// Custom name for User to identify this Resume
+    /// Custom name private to the owning User for identifying this Resume
     /// </summary>
     public string Nickname { get; set; }
     
@@ -29,11 +29,11 @@ public class Resume : IEntity<ResumeId>, IAuditedEntity, ISoftDeletable {
     /// <summary>
     /// Educations listed on this Resume
     /// </summary>
-    public IList<ResumeEducation> Educations { get; set; }
+    public IList<ResumeDegree> Degrees { get; set; }
 
     // Common Entity Properties
     public ResumeId Id { get; private set; } = ResumeId.Generate();
-    public DateTimeOffset CreatedAt { get; set; } = DateTimeOffset.UtcNow;
+    public DateTimeOffset CreatedAt { get; set; } = Clock.Now;
     public DateTimeOffset? UpdatedAt { get; set; }
     public DateTimeOffset? DeletedAt { get; set; }
 
@@ -41,12 +41,13 @@ public class Resume : IEntity<ResumeId>, IAuditedEntity, ISoftDeletable {
     private Resume() {
         Nickname = null!;
         Jobs = null!;
-        Educations = null!;
+        Degrees = null!;
     }
 
-    public Resume(string Nickname) {
+    public Resume(string Nickname, ContactInfoId ContactInfoId) {
         this.Nickname = Nickname;
+        this.ContactInfoId = ContactInfoId;
         this.Jobs = new List<ResumeJob>();
-        this.Educations = new List<ResumeEducation>();
+        this.Degrees = new List<ResumeDegree>();
     }
 }

@@ -11,20 +11,16 @@ using ResumeTech.TestUtil;
 
 namespace ResumeTech.Experiences.UnitTest; 
 
-public class JobTest2 {
+public class JobCommandsTest {
 
-    private Authorizer<Job> Authorizer = null!;
     private IJobRepository JobRepository = null!;
     private JobManager JobManager = null!;
-
     private CreateJob CreateJob = null!;
 
     [SetUp]
     public void SetUp() {
-        Authorizer = new Authorizer<Job>(new List<IAccessFilter<Job>>(), TestAuth.RandomUserProvider());
         JobRepository = new JobInMemoryRepository();
-        JobManager = new JobManager(JobRepository, Authorizer);
-
+        JobManager = new JobManager(JobRepository, new UserDetailsProvider(UserDetails.SystemUser));
         CreateJob = new CreateJob(JobManager);
     }
 
@@ -46,6 +42,7 @@ public class JobTest2 {
         ));
         
         Assert.True(result.RecursiveEquals(new JobDto(
+            OwnerId: UserDetails.SystemUser.Id,
             CompanyName: "Jewel",
             Location: new Location(),
             Positions: new List<PositionDto> {

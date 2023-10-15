@@ -1,4 +1,5 @@
 using ResumeTech.Common.Actions;
+using ResumeTech.Common.Auth;
 
 namespace ResumeTech.Application.Util; 
 
@@ -9,8 +10,9 @@ public class UnitOfWorkFactory : IUnitOfWorkFactory {
         ScopeFactory = scopeFactory;
     }
     
-    public IUnitOfWorkDisposable Create() {
+    public IUnitOfWorkDisposable Create(UserDetails userDetails) {
         var scope = ScopeFactory.CreateScope();
+        scope.ServiceProvider.GetRequiredService<IUserDetailsProvider>().Set(userDetails);
         return new UnitOfWorkDisposable(scope, new UnitOfWork(scope.ServiceProvider));
     }
 }

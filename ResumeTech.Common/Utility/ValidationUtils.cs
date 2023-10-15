@@ -4,6 +4,45 @@ using ResumeTech.Common.Error;
 namespace ResumeTech.Common.Utility; 
 
 public static class ValidationUtils {
+    public const int DefaultMinFieldLen = 1;
+    public const int DefaultMaxFieldLen = 255;
+
+    public static string AssertValid(
+        this string? self,
+        string field,
+        bool trim = true,
+        int min = DefaultMinFieldLen,
+        int max = DefaultMaxFieldLen
+    ) {
+        if (self == null) {
+            throw new AppError(UserMessage: $"{field} is required").ToException();
+        }
+        if (trim) {
+            self = self.Trim();
+        }
+        var len = self.Length;
+        if (len > max) {
+            throw new AppError(UserMessage: $"{field} cannot exceed {max} characters").ToException();
+        }
+        if (len < min) {
+            throw new AppError(UserMessage: $"{field} must have at least {min} characters").ToException();
+        }
+
+        return self;
+    }
+    
+    public static string? AssertNullableValid(
+        this string? self,
+        string field,
+        bool trim = true,
+        int min = 1,
+        int max = 255
+    ) {
+        if (self == null) {
+            return self;
+        }
+        return self.AssertValid(field, trim, min, max);
+    }
 
     public static string AssertMaxTrimmedLength(this string self, int max, string fieldName) {
         string trimmed = self.Trim();
@@ -11,7 +50,7 @@ public static class ValidationUtils {
             throw new AppError(UserMessage: $"{fieldName} cannot be blank").ToException();
         }
         if (trimmed.Length == 0 || trimmed.Length > max) {
-            throw new AppError(UserMessage: $"{fieldName} cannot exceed {max} characters: {self}").ToException();
+            throw new AppError(UserMessage: $"{fieldName} cannot exceed {max} characters").ToException();
         }
         return self;
     }

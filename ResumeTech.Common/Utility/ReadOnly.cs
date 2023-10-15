@@ -33,6 +33,10 @@ public static class ReadOnly {
 public class ReadOnlySet<T> : IReadOnlySet<T> {
     private ISet<T> Impl { get; }
 
+    public ReadOnlySet(IEnumerable<T> impl) {
+        Impl = impl.ToImmutableHashSet();
+    }
+    
     public ReadOnlySet(ISet<T> impl) {
         Impl = impl;
     }
