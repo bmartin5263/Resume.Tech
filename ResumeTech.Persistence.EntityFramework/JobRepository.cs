@@ -5,7 +5,7 @@ using ResumeTech.Experiences.Jobs;
 namespace ResumeTech.Persistence.EntityFramework;
 
 public class JobRepository : GenericSecureRepository<JobId, Job>, IJobRepository {
-    public JobRepository(EFCoreContext context, IUserDetailsProvider userDetailsProvider) : base(context, userDetailsProvider) { }
+    public JobRepository(EFCoreContext context, IUserProvider userProvider) : base(context, userProvider) { }
 
     protected override IQueryable<Job> Entities => base.Entities
         .Include(e => e.Positions);

@@ -20,7 +20,7 @@ public class JobCommandsTest {
     [SetUp]
     public void SetUp() {
         JobRepository = new JobInMemoryRepository();
-        JobManager = new JobManager(JobRepository, new UserDetailsProvider(UserDetails.SystemUser));
+        JobManager = new JobManager(JobRepository, new UserProvider(UserDetails.SystemUser));
         CreateJob = new CreateJob(JobManager);
     }
 

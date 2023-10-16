@@ -4,12 +4,12 @@ using ResumeTech.Identities.Users;
 
 namespace ResumeTech.Application.Util; 
 
-public class UserDetailsProvider : IUserDetailsProvider {
-    private static readonly ILogger Log = Logging.CreateLogger<UserDetailsProvider>();
+public class UserProvider : IUserProvider {
+    private static readonly ILogger Log = Logging.CreateLogger<UserProvider>();
     public UserDetails CurrentUser { get; set; }
     public UserId CurrentUserId => CurrentUser.Id.OrElseThrow("No User Id, not logged in.")!.Value;
 
-    public UserDetailsProvider(IHttpContextAccessor httpContextAccessor) {
+    public UserProvider(IHttpContextAccessor httpContextAccessor) {
         HttpContext? context = httpContextAccessor.HttpContext;
         if (context == null) {
             CurrentUser = UserDetails.NotLoggedIn;

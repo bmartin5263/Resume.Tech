@@ -7,16 +7,16 @@ namespace ResumeTech.Experiences.Jobs;
 
 public class JobManager {
     private IJobRepository JobRepository { get; }
-    private IUserDetailsProvider UserDetailsProvider { get; }
+    private IUserProvider UserProvider { get; }
 
-    public JobManager(IJobRepository jobRepository, IUserDetailsProvider userDetailsProvider) {
+    public JobManager(IJobRepository jobRepository, IUserProvider userProvider) {
         JobRepository = jobRepository;
-        UserDetailsProvider = userDetailsProvider;
+        UserProvider = userProvider;
     }
 
     public Task<JobDto> CreateJob(CreateJobRequest request) {
         var job = new Job(
-            OwnerId: UserDetailsProvider.CurrentUserId,
+            OwnerId: UserProvider.CurrentUserId,
             Location: request.Location,
             CompanyName: request.CompanyName,
             Positions: request.Positions.Select(p => p.ToEntity())

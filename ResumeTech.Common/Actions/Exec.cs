@@ -14,46 +14,43 @@ public class Exec {
 
     private IUnitOfWork UnitOfWork { get; }
     private IEventDispatcher EventDispatcher { get; }
-    private IUserDetailsProvider UserDetailsProvider { get; }
-    // private IActionLogRepository ActionLogRepository { get; }
 
-    public Exec(IUnitOfWork unitOfWork, IEventDispatcher eventDispatcher, IUserDetailsProvider userDetailsProvider) {
+    public Exec(IUnitOfWork unitOfWork, IEventDispatcher eventDispatcher) {
         UnitOfWork = unitOfWork;
         EventDispatcher = eventDispatcher;
-        UserDetailsProvider = userDetailsProvider;
     }
     
     // Tell compiler to ignore nullability generic types for these function calls
 #pragma warning disable CS8619
-    public Task<O> Command<I, O>(Command<I, O> command, I args) where O : notnull {
-        return RunCommand(command!, args);
+    public Task<O> Command<I, O>(Command<I, O> command, UserDetails user, I args) where O : notnull {
+        return RunCommand(command!, user, args);
     }
 
-    public Task<O> Command<O>(Command<O> command) where O : notnull {
-        return RunCommand(command!, null);
+    public Task<O> Command<O>(Command<O> command, UserDetails user) where O : notnull {
+        return RunCommand(command!, user, null);
     }
 
-    public Task Command<I>(PureCommand<I> command, I args) {
-        return RunCommand(command!, args);
+    public Task Command<I>(PureCommand<I> command, UserDetails user, I args) {
+        return RunCommand(command!, user, args);
     }
     
-    public Task Command(PureCommand command) {
-        return RunCommand(command!, null);
+    public Task Command(PureCommand command, UserDetails user) {
+        return RunCommand(command!, user, null);
     }
 
-    public Task<O?> Query<I, O>(Query<I, O> command, I args){
-        return RunQuery(command!, args);
+    public Task<O?> Query<I, O>(Query<I, O> command, UserDetails user, I args){
+        return RunQuery(command!, user, args);
     }
 
-    public Task<O?> Query<O>(Query<O> command) {
-        return RunQuery(command!, null);
+    public Task<O?> Query<O>(Query<O> command, UserDetails user) {
+        return RunQuery(command!, user, null);
     }
 #pragma warning restore CS8619
     
-    public Task<O?> RunCommand<I, O>(Command<I?, O?> command, I? args) {
+    public Task<O?> RunCommand<I, O>(Command<I?, O?> command, UserDetails user, I? args) {
         var logPolicy = command.LogPolicy;
         Log.LogInformation("Executing Command {CommandName} with Log Policy {LogPolicy}", command.Name, logPolicy);
-        return RunCommandWithoutLogging(command, args);
+        return RunCommandWithoutLogging(command, args, user);
     }
 
     private static void Authenticate<I, O>(Action<I?, O?> command, UserDetails user) {
@@ -68,8 +65,7 @@ public class Exec {
         command.UserRoles.Authorize(user);
     }
     
-    private async Task<O?> RunCommandWithoutLogging<I, O>(Command<I?, O?> command, I? args) {
-        var user = UserDetailsProvider.CurrentUser;
+    private async Task<O?> RunCommandWithoutLogging<I, O>(Command<I?, O?> command, I? args, UserDetails user) {
         var username = user.Username ?? "Anonymous";
         Log.LogInformation($"{username} is executing Command {command.Name}");
 
@@ -110,8 +106,7 @@ public class Exec {
     //     }
     // }
 
-    public async Task<O?> RunQuery<I, O>(Query<I?, O?> query, I? args) {
-        var user = UserDetailsProvider.CurrentUser;
+    public async Task<O?> RunQuery<I, O>(Query<I?, O?> query, UserDetails user, I? args) {
         var username = user.Id?.Value.ToString("N") ?? "Anonymous";
         Log.LogInformation($"{username} is executing Query {query.Name}");
 

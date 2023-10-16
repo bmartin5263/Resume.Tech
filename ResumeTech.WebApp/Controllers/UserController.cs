@@ -2,6 +2,7 @@ using System.Text;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using ResumeTech.Common.Actions;
+using ResumeTech.Common.Auth;
 using ResumeTech.Experiences.Jobs;
 using ResumeTech.Identities.Command;
 using ResumeTech.Identities.Users;
@@ -12,10 +13,12 @@ namespace ResumeTech.Application.Controllers;
 public class UserController : ControllerBase {
     private Exec Exec { get; }
     private IUnitOfWork UnitOfWork { get; }
+    private IUserProvider UserProvider { get; }
 
-    public UserController(Exec exec, IUnitOfWork unitOfWork) {
+    public UserController(Exec exec, IUnitOfWork unitOfWork, IUserProvider userProvider) {
         Exec = exec;
         UnitOfWork = unitOfWork;
+        UserProvider = userProvider;
     }
 
     /// <summary>
@@ -29,7 +32,7 @@ public class UserController : ControllerBase {
     ) {
         ParseBasicAuth(authorization, out string usernameOrEmail, out string password);
         var command = UnitOfWork.GetService<Login>();
-        var result = await Exec.Command(command, new LoginParameters(
+        var result = await Exec.Command(command, UserProvider.CurrentUser, new LoginParameters(
             UsernameOrEmail: usernameOrEmail,
             Password: password
         ));
@@ -54,7 +57,7 @@ public class UserController : ControllerBase {
     [Route("register")]
     public async Task<UserDto> Register([FromBody] RegisterParameters args) {
         var command = UnitOfWork.GetService<Register>();
-        return await Exec.Command(command, args);
+        return await Exec.Command(command, UserProvider.CurrentUser, args);
     }
     
     private static void ParseBasicAuth(string header, out string username, out string password) {

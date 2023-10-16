@@ -46,6 +46,9 @@ public sealed class UnitOfWorkDisposable : IUnitOfWorkDisposable {
     }
 
     public void Dispose() {
+        if (Disposed) {
+            return;
+        }
         Scope.Dispose();
         Disposed = true;
     }

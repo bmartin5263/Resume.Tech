@@ -3,11 +3,11 @@ using ResumeTech.Common.Utility;
 
 namespace ResumeTech.TestUtil; 
 
-public class UserDetailsProvider : IUserDetailsProvider {
+public class UserProvider : IUserProvider {
     public UserDetails CurrentUser { get; }
     public UserId CurrentUserId => CurrentUser.Id!.Value.OrElseThrow();
 
-    public UserDetailsProvider(UserDetails currentUser) {
+    public UserProvider(UserDetails currentUser) {
         CurrentUser = currentUser;
     }
 

@@ -10,12 +10,12 @@ public abstract class GenericSecureRepository<ID, TEntity> : IRepository<ID, TEn
     protected EFCoreContext Context { get; }
     protected virtual IQueryable<TEntity> Entities => Context.Set<TEntity>();
     
-    protected IUserDetailsProvider UserDetailsProvider { get; }
-    protected UserDetails CurrentUser => UserDetailsProvider.CurrentUser;
+    protected IUserProvider UserProvider { get; }
+    protected UserDetails CurrentUser => UserProvider.CurrentUser;
 
-    protected GenericSecureRepository(EFCoreContext context, IUserDetailsProvider userDetailsProvider) {
+    protected GenericSecureRepository(EFCoreContext context, IUserProvider userProvider) {
         Context = context;
-        UserDetailsProvider = userDetailsProvider;
+        UserProvider = userProvider;
     }
 
     private void DoAuthorizeCanRead(TEntity entity) {

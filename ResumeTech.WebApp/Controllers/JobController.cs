@@ -2,6 +2,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using ResumeTech.Application.Util;
 using ResumeTech.Common.Actions;
+using ResumeTech.Common.Auth;
 using ResumeTech.Common.Utility;
 using ResumeTech.Experiences.Jobs;
 using ResumeTech.Experiences.Jobs.Actions;
@@ -15,10 +16,12 @@ namespace ResumeTech.Application.Controllers;
 public class JobController : ControllerBase {
     private Exec Exec { get; }
     private IUnitOfWork UnitOfWork { get; }
+    private IUserProvider UserProvider { get; }
 
-    public JobController(Exec exec, IUnitOfWork unitOfWork) {
+    public JobController(Exec exec, IUnitOfWork unitOfWork, IUserProvider userProvider) {
         Exec = exec;
         UnitOfWork = unitOfWork;
+        UserProvider = userProvider;
     }
 
     /// <summary>
@@ -28,7 +31,7 @@ public class JobController : ControllerBase {
     [HttpPost]
     public Task<JobDto> CreateJob([FromBody] CreateJobRequest request) {
         var command = UnitOfWork.GetService<CreateJob>();
-        return Exec.Command(command, request);
+        return Exec.Command(command, UserProvider.CurrentUser, request);
     }
     
     /// <summary>
@@ -39,7 +42,7 @@ public class JobController : ControllerBase {
     public async Task<JobDto> GetJobById(string id) {
         var jobId = JobId.Parse(id);
         var query = UnitOfWork.GetService<GetJobById>();
-        var result = await Exec.Query(query, new GetJobByIdRequest(
+        var result = await Exec.Query(query, UserProvider.CurrentUser, new GetJobByIdRequest(
             Id: JobId.Parse(id))
         );
         return result.OrElseNotFound(jobId);
@@ -52,7 +55,7 @@ public class JobController : ControllerBase {
     [HttpPatch]
     public Task<JobDto> PatchJob(string id, [FromBody] PatchJobRequest request) {
         var command = UnitOfWork.GetService<PatchJob>();
-        return Exec.Command(command, request with {
+        return Exec.Command(command, UserProvider.CurrentUser, request with {
             Id = JobId.Parse(id)
         });
     }
@@ -64,7 +67,7 @@ public class JobController : ControllerBase {
     [HttpDelete]
     public Task DeleteJob(string id) {
         var command = UnitOfWork.GetService<DeleteJob>();
-        return Exec.Command(command, new DeleteJobRequest(Id: JobId.Parse(id)));
+        return Exec.Command(command, UserProvider.CurrentUser, new DeleteJobRequest(Id: JobId.Parse(id)));
     }
 
     /// <summary>
@@ -75,7 +78,7 @@ public class JobController : ControllerBase {
     [Authorize(Roles = "Admin")]
     public Task PurgeJob(string id) {
         var command = UnitOfWork.GetService<PurgeJob>();
-        return Exec.Command(command, new DeleteJobRequest(Id: JobId.Parse(id)));
+        return Exec.Command(command, UserProvider.CurrentUser, new DeleteJobRequest(Id: JobId.Parse(id)));
     }
 
 }

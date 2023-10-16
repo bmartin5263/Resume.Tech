@@ -56,7 +56,7 @@ public static class ServiceUtils {
         builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
         builder.Services.AddScoped<IJwtMinter, JwtMinter>();
         builder.Services.AddScoped<Exec>();
-        builder.Services.AddScoped<IUserDetailsProvider, UserDetailsProvider>();
+        builder.Services.AddScoped<IUserProvider, UserProvider>();
         builder.Services.AddScoped<IUserManager, DuendeUserManager>();
 
         foreach (var action in commandsAndQueries) {

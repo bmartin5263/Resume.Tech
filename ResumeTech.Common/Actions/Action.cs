@@ -24,7 +24,7 @@ public abstract class Action<I, O> {
     /// Returns whether a logged in user is required for this Action. Implementation checks if there
     /// were any roles specified for this action, since every logged in user will have at least 1 role
     /// </summary>
-    public bool RequiresLoggedInUser => this.UserRoles.IsEmpty();
+    public bool RequiresLoggedInUser => !this.UserRoles.IsEmpty();
     
     public virtual Task Validate(UserDetails user, I args) {
         return Task.CompletedTask;
