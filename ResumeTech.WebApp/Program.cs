@@ -100,15 +100,17 @@ internal class Program {
             app.MigrateDb();
         }
         
-        Console.WriteLine("Initializing");
+        await Initialize(app);
+        await app.RunAsync();
+    }
 
+    private static async Task Initialize(WebApplication app) {
+        Console.WriteLine("Initializing");
         var exec = app.Services.GetRequiredService<Exec>();
         var userDetailsProvider = app.Services.GetRequiredService<IUserProvider>();
         userDetailsProvider.Login(UserDetails.SystemUser);
         
         var unitOfWork = app.Services.GetRequiredService<IUnitOfWork>();
         await exec.Command(unitOfWork.GetService<InitializeApp>());
-
-        await app.RunAsync();
     }
 }
