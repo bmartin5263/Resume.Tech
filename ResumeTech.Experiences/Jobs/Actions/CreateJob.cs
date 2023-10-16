@@ -8,7 +8,6 @@ namespace ResumeTech.Experiences.Jobs.Actions;
 
 public class CreateJob : Command<CreateJobRequest, JobDto> {
     public override string Name => "CreateJob";
-
     private JobManager JobManager { get; }
 
     public CreateJob(JobManager jobManager) {

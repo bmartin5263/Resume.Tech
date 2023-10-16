@@ -103,9 +103,11 @@ internal class Program {
         Console.WriteLine("Initializing");
 
         var exec = app.Services.GetRequiredService<Exec>();
+        var userDetailsProvider = app.Services.GetRequiredService<IUserProvider>();
+        userDetailsProvider.Login(UserDetails.SystemUser);
         
         var unitOfWork = app.Services.GetRequiredService<IUnitOfWork>();
-        await exec.Command(unitOfWork.GetService<InitializeApp>(), UserDetails.SystemUser);
+        await exec.Command(unitOfWork.GetService<InitializeApp>());
 
         await app.RunAsync();
     }

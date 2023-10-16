@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Immutable;
 using ResumeTech.Common.Auth;
+using ResumeTech.Common.Error;
 using ResumeTech.Common.Utility;
 
 namespace ResumeTech.Common.Actions; 
@@ -12,6 +13,10 @@ public class Roles : IEnumerable<RoleName> {
     public Roles(IReadOnlySet<RoleName> roles, RoleCheckMode mode) {
         Values = roles;
         Mode = mode;
+
+        if (roles.Contains(RoleName.Admin) && (roles.Count > 1 || mode != RoleCheckMode.All)) {
+            throw new AppException("Roles must contain only admin and mode must be All when doing Admin only");
+        }
     }
 
     public static Roles Any(params RoleName[] roles) {

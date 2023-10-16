@@ -12,7 +12,7 @@ public class UnitOfWorkFactory : IUnitOfWorkFactory {
     
     public IUnitOfWorkDisposable Create(UserDetails userDetails) {
         var scope = ScopeFactory.CreateScope();
-        scope.ServiceProvider.GetRequiredService<IUserProvider>().Set(userDetails);
+        scope.ServiceProvider.GetRequiredService<IUserProvider>().Login(userDetails);
         return new UnitOfWorkDisposable(scope, new UnitOfWork(scope.ServiceProvider));
     }
 }

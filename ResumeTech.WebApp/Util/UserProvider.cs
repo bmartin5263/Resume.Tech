@@ -39,7 +39,7 @@ public class UserProvider : IUserProvider {
         );
     }
 
-    public void Set(UserDetails details) {
+    public void Login(UserDetails details) {
         if (CurrentUser.Id != null) {
             throw new InvalidOperationException("Cannot set UserId twice");
         }

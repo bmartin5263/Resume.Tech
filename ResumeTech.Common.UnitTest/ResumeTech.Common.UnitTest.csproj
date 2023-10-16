@@ -19,6 +19,7 @@
 
     <ItemGroup>
       <ProjectReference Include="..\ResumeTech.Common\ResumeTech.Common.csproj" />
+      <ProjectReference Include="..\ResumeTech.TestUtil\ResumeTech.TestUtil.csproj" />
     </ItemGroup>
 
 </Project>

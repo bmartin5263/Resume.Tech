@@ -1,4 +1,5 @@
 using ResumeTech.Common.Actions;
+using ResumeTech.Common.Auth;
 using ResumeTech.Common.Error;
 using ResumeTech.Common.Events;
 using ResumeTech.Common.Utility;
@@ -10,6 +11,8 @@ public sealed class UnitOfWorkDisposable : IUnitOfWorkDisposable {
 
     private IServiceScope Scope { get; }
     private IUnitOfWork UnitOfWork { get; }
+    public IList<IDomainEvent> Events => UnitOfWork.Events;
+    public UserDetails User => UnitOfWork.User;
     private bool Disposed { get; set; }
 
     public UnitOfWorkDisposable(IServiceScope scope, IUnitOfWork unitOfWork) {
@@ -17,7 +20,22 @@ public sealed class UnitOfWorkDisposable : IUnitOfWorkDisposable {
         UnitOfWork = unitOfWork;
     }
 
-    public Task<ICollection<IDomainEvent>> Commit() {
+
+    public IUnitOfWorkDisposable New(UserDetails? user = null) {
+        if (Disposed) {
+            throw new AppException("Cannot Create a new Unit of Work from a disposed Unit of Work");
+        }
+        return UnitOfWork.New(user);
+    }
+    
+    public Exec Execute() {
+        if (Disposed) {
+            throw new AppException("Cannot call Execute on a disposed Unit of Work");
+        }
+        return UnitOfWork.Execute();
+    }
+
+    public Task Commit() {
         if (Disposed) {
             throw new AppException("Cannot Commit a disposed Unit of Work");
         }

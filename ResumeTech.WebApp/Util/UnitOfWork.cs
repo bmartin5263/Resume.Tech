@@ -1,5 +1,6 @@
 using Microsoft.EntityFrameworkCore;
 using ResumeTech.Common.Actions;
+using ResumeTech.Common.Auth;
 using ResumeTech.Common.Error;
 using ResumeTech.Common.Events;
 using ResumeTech.Common.Utility;
@@ -11,9 +12,10 @@ public sealed class UnitOfWork : IUnitOfWork {
     private static readonly ILogger Log = Logging.CreateLogger<UnitOfWorkDisposable>();
 
     private EFCoreContext DbContext { get; }
-    private ICollection<IDomainEvent> Events { get; }
+    public IList<IDomainEvent> Events { get; }
     private IServiceProvider ServiceProvider { get; }
     private bool Committed { get; set; }
+    public UserDetails User => GetService<IUserProvider>().CurrentUser;
 
     public UnitOfWork(IServiceProvider serviceProvider) {
         Console.WriteLine("New Unit of Work");
@@ -37,9 +39,18 @@ public sealed class UnitOfWork : IUnitOfWork {
         return ServiceProvider.GetRequiredService(type);
     }
 
-    public async Task<ICollection<IDomainEvent>> Commit() {
+    public IUnitOfWorkDisposable New(UserDetails? user = null) {
+        var factory = ServiceProvider.GetRequiredService<IUnitOfWorkFactory>();
+        return factory.Create(user ?? User);
+    }
+
+    public Exec Execute() {
+        return ServiceProvider.GetRequiredService<Exec>();
+    }
+
+    public async Task Commit() {
         if (Committed) {
-            return Events;
+            return;
         }
         
         await DbContext.SaveChangesAsync();
@@ -52,6 +63,5 @@ public sealed class UnitOfWork : IUnitOfWork {
         }
 
         Committed = true;
-        return Events;
     }
 }

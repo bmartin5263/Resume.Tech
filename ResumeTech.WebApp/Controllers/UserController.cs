@@ -32,7 +32,7 @@ public class UserController : ControllerBase {
     ) {
         ParseBasicAuth(authorization, out string usernameOrEmail, out string password);
         var command = UnitOfWork.GetService<Login>();
-        var result = await Exec.Command(command, UserProvider.CurrentUser, new LoginParameters(
+        var result = await Exec.Command(command, new LoginParameters(
             UsernameOrEmail: usernameOrEmail,
             Password: password
         ));
@@ -57,7 +57,7 @@ public class UserController : ControllerBase {
     [Route("register")]
     public async Task<UserDto> Register([FromBody] RegisterParameters args) {
         var command = UnitOfWork.GetService<Register>();
-        return await Exec.Command(command, UserProvider.CurrentUser, args);
+        return await Exec.Command(command, args);
     }
     
     private static void ParseBasicAuth(string header, out string username, out string password) {
