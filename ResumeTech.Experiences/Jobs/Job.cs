@@ -52,8 +52,8 @@ public sealed class Job : IEntity<JobId>, IAuditedEntity, ISoftDeletable, IEquat
         this.OwnerId = OwnerId;
         this.CompanyName = CompanyName;
         this.Positions = new List<Position>(Positions).AssertNotEmpty("Positions");
-        this.Skills = new List<Skill>(Skills ?? Enumerable.Empty<Skill>());
-        this.Tags = new List<Tag>(Tags ?? Enumerable.Empty<Tag>());
+        this.Skills = new List<Skill>(Skills.OrEmpty());
+        this.Tags = new List<Tag>(Tags.OrEmpty());
         this.Location = Location ?? new Location();
     }
     

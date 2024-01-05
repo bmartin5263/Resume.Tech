@@ -5,7 +5,7 @@ namespace ResumeTech.TestUtil;
 
 public class UserProviderMock : IUserProvider {
     public UserDetails CurrentUser { get; private set; }
-    public UserId CurrentUserId => CurrentUser.Id!.Value.OrElseThrow();
+    public UserId CurrentUserId => CurrentUser.Id!.Value.OrElseThrow("Current user is not set");
 
     public UserProviderMock(UserDetails currentUser) {
         CurrentUser = currentUser;

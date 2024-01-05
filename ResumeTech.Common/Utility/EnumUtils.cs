@@ -8,7 +8,7 @@ public static class EnumUtils {
         if (Enum.TryParse(typeof(T), self, out var result)) {
             return (T) result;
         }
-        throw new AppException($"Failed to parse enum type {typeof(T)} from string {self}");
+        throw new ArgumentException($"Failed to parse enum type {typeof(T)} from string {self}");
     }
     
 }

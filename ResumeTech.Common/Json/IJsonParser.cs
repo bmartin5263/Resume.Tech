@@ -12,7 +12,7 @@ public interface IJsonParser {
         get => defaultParser.OrElseThrow("Default parser has not yet been set");
         set {
             if (defaultParser != null) {
-                throw new AppException("Cannot set the default parser more than once");
+                throw new InvalidOperationException("Cannot set the default parser more than once");
             }
             defaultParser = value;
         }

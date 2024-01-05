@@ -23,42 +23,42 @@ public sealed class UnitOfWorkDisposable : IUnitOfWorkDisposable {
 
     public IUnitOfWorkDisposable New(UserDetails? user = null) {
         if (Disposed) {
-            throw new AppException("Cannot Create a new Unit of Work from a disposed Unit of Work");
+            throw new InvalidOperationException("Cannot Create a new Unit of Work from a disposed Unit of Work");
         }
         return UnitOfWork.New(user);
     }
     
     public Exec Execute() {
         if (Disposed) {
-            throw new AppException("Cannot call Execute on a disposed Unit of Work");
+            throw new InvalidOperationException("Cannot call Execute on a disposed Unit of Work");
         }
         return UnitOfWork.Execute();
     }
 
     public Task Commit() {
         if (Disposed) {
-            throw new AppException("Cannot Commit a disposed Unit of Work");
+            throw new InvalidOperationException("Cannot Commit a disposed Unit of Work");
         }
         return UnitOfWork.Commit();
     }
 
     public void RaiseEvent(IDomainEvent domainEvent) {
         if (Disposed) {
-            throw new AppException("Cannot Raise Event on a disposed Unit of Work");
+            throw new InvalidOperationException("Cannot Raise Event on a disposed Unit of Work");
         }
         UnitOfWork.RaiseEvent(domainEvent);
     }
 
     public T GetService<T>() where T : notnull {
         if (Disposed) {
-            throw new AppException("Cannot get service on a disposed Unit of Work");
+            throw new InvalidOperationException("Cannot get service on a disposed Unit of Work");
         }
         return UnitOfWork.GetService<T>();
     }
 
     public object GetService(Type type) {
         if (Disposed) {
-            throw new AppException("Cannot get service on a disposed Unit of Work");
+            throw new InvalidOperationException("Cannot get service on a disposed Unit of Work");
         }
         return UnitOfWork.GetService(type);
     }

@@ -10,7 +10,7 @@ public static class RepositoryUtils {
         IDictionary<Type, Type> repoTypes = typeof(IRepository<,>).FindAllKnownGenericSubtypes(assemblyName);
         foreach (var (repoType, interfaceType) in repoTypes) {
             if (result.ContainsKey(repoType)) {
-                throw new AppException("Found duplicate repository types");
+                throw new ConfigurationException("Found duplicate repository types");
             }
 
             var superTypes = repoType.GetInterfaces().ToHashSet();

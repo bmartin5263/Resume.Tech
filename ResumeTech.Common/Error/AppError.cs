@@ -6,35 +6,30 @@ using static System.Text.Json.Serialization.JsonIgnoreCondition;
 
 namespace ResumeTech.Common.Error;
 
-public enum AppSubErrorType {
-    DataMissing,
-    DataInvalid
-}
-
 public sealed record AppSubError(string Path, string Message);
 
 public sealed record AppError {
+    public string Message { get; }
     public Exception? CausedBy { get; }
+    public ISet<AppSubError> SubErrors { get; }
     public HttpStatusCode StatusCode { get; }
-    public string? UserMessage { get; }
-    public string? DeveloperMessage { get; }
-    public IList<AppSubError> SubErrors { get; }
-
-    public bool IsUserError => (int)StatusCode >= 400 && (int)StatusCode <= 499;
-
-    public AppError(Exception? CausedBy = null, HttpStatusCode? StatusCode = null, string? UserMessage = null, string? DeveloperMessage = null, IList<AppSubError>? SubErrors = null) {
+    
+    public AppError(
+        string Message, 
+        HttpStatusCode StatusCode,
+        Exception? CausedBy = null, 
+        ISet<AppSubError>? SubErrors = null
+    ) {
+        this.Message = Message;
+        this.StatusCode = StatusCode;
         this.CausedBy = CausedBy;
-        this.SubErrors = SubErrors ?? ImmutableList<AppSubError>.Empty;
-        this.StatusCode = StatusCode ?? (UserMessage != null || this.SubErrors.IsNotEmpty() ? HttpStatusCode.BadRequest : HttpStatusCode.InternalServerError);
-        this.UserMessage = UserMessage;
-        this.DeveloperMessage = DeveloperMessage ?? CausedBy?.Message;
+        this.SubErrors = SubErrors ?? ImmutableHashSet<AppSubError>.Empty;
     }
 
     public AppErrorDto ToDto(string traceId, bool includeDevInfo) {
         return new AppErrorDto(
             CausedBy: includeDevInfo ? CausedBy?.GetType().Name : null,
-            UserMessage: DetermineUserMessage(UserMessage, SubErrors),
-            DeveloperMessage: includeDevInfo ? DeveloperMessage : null,
+            Message: Message,
             SubErrors: SubErrors.Count == 0 ? null : SubErrors.Select(e => new AppSubErrorDto(
                 Path: e.Path,
                 Message: e.Message
@@ -42,53 +37,31 @@ public sealed record AppError {
             TraceId: traceId
         );
     }
-    
-    private static string DetermineUserMessage(string? userMessage, IList<AppSubError>? subErrors) {
-        if (userMessage != null) {
-            return userMessage;
-        }
-        return subErrors?.Count > 0 
-            ? "Multiple errors occurred" 
-            : "A system error has occurred. Please contact support@resumetech.io for Technical Support";
-    }
-
-    public static AppErrorBuilder Builder(HttpStatusCode statusCode) {
-        return new AppErrorBuilder()
-            .StatusCode(statusCode);
-    }
 
     public AppException ToException() {
         return new AppException(this);
     }
+    
+    public static AppErrorBuilder Builder(string message) {
+        return new AppErrorBuilder(message);
+    }
 }
 
 public class AppErrorBuilder {
+    private string _message;
     private Exception? _causedBy;
-    private HttpStatusCode _statusCode;
-    private string? _userMessage;
-    private string? _developerMessage;
     private HashSet<AppSubError>? _subErrors;
+    private HttpStatusCode _statusCode;
+
+    public AppErrorBuilder(string message) {
+        _message = message;
+    }
 
     public AppErrorBuilder CausedBy(Exception exception) {
         _causedBy = exception;
         return this;
     }
 
-    public AppErrorBuilder StatusCode(HttpStatusCode statusCode) {
-        _statusCode = statusCode;
-        return this;
-    }
-    
-    public AppErrorBuilder UserMessage(string? userMessage) {
-        _userMessage = userMessage;
-        return this;
-    }
-    
-    public AppErrorBuilder DeveloperMessage(string? developerMessage) {
-        _developerMessage = developerMessage;
-        return this;
-    }
-    
     public AppErrorBuilder SubError(string path, string message) {
         _subErrors ??= new HashSet<AppSubError>();
         _subErrors.Add(new AppSubError(path, message));
@@ -109,11 +82,10 @@ public class AppErrorBuilder {
 
     public AppError Build() {
         return new AppError(
+            Message: _message,
             CausedBy: _causedBy,
-            StatusCode: _statusCode,
-            UserMessage: _userMessage,
-            DeveloperMessage: _developerMessage,
-            SubErrors: _subErrors?.ToList()
+            SubErrors: _subErrors?.ToImmutableHashSet(),
+            StatusCode: _statusCode
         );
     }
 
@@ -129,9 +101,8 @@ public sealed record AppSubErrorDto(
 
 public sealed record AppErrorDto(
     [property: JsonIgnore(Condition = WhenWritingNull)] string? CausedBy = null,
-    [property: JsonIgnore(Condition = WhenWritingNull)] string? ErrorType = null, 
-    [property: JsonIgnore(Condition = WhenWritingNull)] string? UserMessage = null, 
-    [property: JsonIgnore(Condition = WhenWritingNull)] string? DeveloperMessage = null, 
-    [property: JsonIgnore(Condition = WhenWritingNull)] List<AppSubErrorDto>? SubErrors = null, 
+    [property: JsonIgnore(Condition = WhenWritingNull)] string? Message = null,
+    [property: JsonIgnore(Condition = WhenWritingNull)] List<AppSubErrorDto>? SubErrors = null,
+    [property: JsonIgnore(Condition = WhenWritingNull)] HttpStatusCode? StatusCode = null,
     [property: JsonIgnore(Condition = WhenWritingNull)] string? TraceId = null
 );

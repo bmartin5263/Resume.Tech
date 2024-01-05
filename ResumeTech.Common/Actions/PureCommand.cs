@@ -18,12 +18,4 @@ public abstract class PureCommand : PureCommand<object>  {
     }
 
     public abstract Task RunWithoutResult();
-    
-    public sealed override Task Validate(UserDetails user, object? args) {
-        return Validate(user);
-    }
-
-    public virtual Task Validate(UserDetails user) {
-        return Task.CompletedTask;
-    }
 }

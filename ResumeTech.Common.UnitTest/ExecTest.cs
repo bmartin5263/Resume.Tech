@@ -1,6 +1,7 @@
 using Moq;
 using ResumeTech.Common.Actions;
 using ResumeTech.Common.Auth;
+using ResumeTech.Common.Error;
 using ResumeTech.Common.Events;
 using ResumeTech.Common.Utility;
 using ResumeTech.TestUtil;
@@ -34,7 +35,7 @@ public class ExecTest {
         var user = CreateUser(Enumerable.Empty<RoleName>());
         unitOfWork.Login(user);
 
-        Assert.ThrowsAsync<AccessDeniedException>(() => subject.Command(new BasicCommand(), "123"));
+        Assert.ThrowsAsync<AuthorizationException>(() => subject.Command(new BasicCommand(), "123"));
     }
 
     [Test]
@@ -62,7 +63,7 @@ public class ExecTest {
         var user = CreateUser(new[] { RoleName.User });
         unitOfWork.Login(user);
         
-        Assert.ThrowsAsync<AccessDeniedException>(() => subject.Command(new AdminOnlyCommand(), "123"));
+        Assert.ThrowsAsync<AuthorizationException>(() => subject.Command(new AdminOnlyCommand(), "123"));
     }
 
     private static UserDetails CreateUser(IEnumerable<RoleName> roles) {

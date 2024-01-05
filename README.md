@@ -123,4 +123,4 @@ These should occur automatically when setting illegal values to properties
 
 #### Database-level Validation
 This is validation that occurs on the database.
-These validations ensure database integrity when doing manual revisions
+These validations ensure database integrity when doing manual revisions.

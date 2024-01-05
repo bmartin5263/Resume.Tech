@@ -56,24 +56,22 @@ internal class Program {
             })
         );
         
-        builder.Services.Configure<ApiBehaviorOptions>(o =>
-        {
-            o.InvalidModelStateResponseFactory = actionContext =>
-            {
+        builder.Services.Configure<ApiBehaviorOptions>(o => {
+            o.InvalidModelStateResponseFactory = actionContext => {
                 var parameters = actionContext.ModelState;
-                var errorBuilder = AppError.Builder(HttpStatusCode.BadRequest);
+                var errorBuilder = AppError.Builder("Multiple validation error occurs");
 
                 foreach (var (key, value) in parameters) {
                     foreach (var errorMessage in value.Errors.Select(e => e.ErrorMessage)) {
                         if (errorMessage.EndsWith("is required.")) {
                             errorBuilder.SubError(new AppSubError(
-                                Path: char.ToLowerInvariant(key[0]) + key[1..],
-                                Message: "Value is required"
+                                Path: key,
+                                Message: $"{key} is required"
                             ));
                         }
                         else {
                             errorBuilder.SubError(new AppSubError(
-                                Path: char.ToLowerInvariant(key[0]) + key[1..],
+                                Path: key,
                                 Message: errorMessage
                             ));
                         }
@@ -85,7 +83,7 @@ internal class Program {
         });
         
         var app = builder.Build();
-        Logging.LoggerFactory = app.Services.GetRequiredService<ILoggerFactory>();
+        Logging.Factory = app.Services.GetRequiredService<ILoggerFactory>();
 
         app.UseSwagger();
         app.UseSwaggerUI();

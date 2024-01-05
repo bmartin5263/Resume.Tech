@@ -32,31 +32,22 @@ public sealed class UnitOfWorkMock : IUnitOfWorkDisposable {
     }
     
     public void RaiseEvent(IDomainEvent domainEvent) {
-        if (Disposed) {
-            throw new AppException("Disposed");
-        }
+        AssertNotDisposed();
         Events.Add(domainEvent);
     }
 
     public T GetService<T>() where T : notnull {
-        if (Disposed) {
-            throw new AppException("Disposed");
-        }
+        AssertNotDisposed();
         return (T) GetService(typeof(T));
     }
 
     public object GetService(Type type) {
-        if (Disposed) {
-            throw new AppException("Disposed");
-        }
+        AssertNotDisposed();
         return Services[type];
     }
 
     public IUnitOfWorkDisposable New(UserDetails? user = null) {
-        if (Disposed) {
-            throw new AppException("Disposed");
-        }
-
+        AssertNotDisposed();
         var currentUser = GetService<IUserProvider>().CurrentUser;
         if (Services.TryGetValue(typeof(IUnitOfWorkFactory), out var obj)) {
             var factory = (IUnitOfWorkFactory) obj;
@@ -64,6 +55,12 @@ public sealed class UnitOfWorkMock : IUnitOfWorkDisposable {
         }
         else {
             return new UnitOfWorkMock(user ?? currentUser, Services);
+        }
+    }
+
+    private void AssertNotDisposed() {
+        if (Disposed) {
+            throw new InvalidOperationException("Unit of work is already disposed");
         }
     }
 

@@ -19,11 +19,15 @@ public static class EnumerableUtils {
         return !ContainsAny(lhs, rhs);
     }
 
-    public static bool IsEmpty<T>(this IEnumerable<T>? collection) {
-        return collection == null || !collection.Any();
+    public static bool IsEmpty<T>(this IEnumerable<T>? enumerable) {
+        return enumerable == null || !enumerable.Any();
     }
 
-    public static bool IsNotEmpty<T>(this IEnumerable<T>? collection) {
-        return !collection.IsEmpty();
+    public static bool IsNotEmpty<T>(this IEnumerable<T>? enumerable) {
+        return !enumerable.IsEmpty();
+    }
+
+    public static IEnumerable<T> OrEmpty<T>(this IEnumerable<T>? enumerable) {
+        return enumerable ?? Enumerable.Empty<T>();
     }
 }

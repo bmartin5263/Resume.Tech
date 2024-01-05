@@ -26,7 +26,7 @@ public abstract class Action<I, O> {
     /// </summary>
     public bool RequiresLoggedInUser => !this.UserRoles.IsEmpty();
     
-    public virtual Task Validate(UserDetails user, I args) {
+    public virtual Task Validate(ValidationContext<I> ctx) {
         return Task.CompletedTask;
     }
     

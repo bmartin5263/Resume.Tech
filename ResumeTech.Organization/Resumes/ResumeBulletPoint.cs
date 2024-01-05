@@ -23,7 +23,7 @@ public class ResumeBulletPoint : IEntity<ResumeBulletPointId>, IAuditedEntity, I
         this.Content = Content;
 
         if (ReferenceBulletPointId == null && Content.IsBlank()) {
-            throw new AppException("Resume Bullet Points must have content if they do not reference another");
+            throw new ArgumentException("Resume Bullet Points must have content if they do not reference another");
         }
     }
 }

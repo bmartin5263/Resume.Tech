@@ -26,7 +26,7 @@ public sealed class UnitOfWork : IUnitOfWork {
 
     public void RaiseEvent(IDomainEvent domainEvent) {
         if (Committed) {
-            throw new AppException("Cannot RaiseEvent on a committed Unit of Work");
+            throw new InvalidOperationException("Cannot RaiseEvent on a committed Unit of Work");
         }
         Events.Add(domainEvent);
     }

@@ -27,14 +27,13 @@ public class InitializeApp : PureCommand {
         }
         
         IUser admin = await UserManager.FindUserByUsernameAsync("admin") 
-                       ?? await UserManager.CreateUserAsync(new CreateUserRequest(
+                      ?? await UserManager.CreateUserAsync(new CreateUserRequest(
                            Id: UserId.Generate(),
                            Username: "admin",
                            Email: new EmailAddress("admin@example.com"),
                            Password: "Password",
                            EmailConfirmed: true
-                           )
-                       );
+                        ));
 
         IList<IRole> roles = await UserManager.GetRolesAsync(admin);
         if (!roles.Select(r => r.RoleName).Contains(RoleName.Admin)) {

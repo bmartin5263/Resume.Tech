@@ -29,7 +29,7 @@ public abstract class GenericInMemoryRepository<ID, TEntity> : IRepository<ID, T
 
     public async Task<TEntity> FindByIdOrThrow(ID id) {
         var entity = await FindById(id);
-        return entity.OrElseThrow(UserMessage: $"{typeof(TEntity).Name} not found by id: {id}");
+        return entity.OrElseThrow($"{typeof(TEntity).Name} not found by id: {id}");
     }
 
     public async Task<TEntity> FindByIdOrThrow(ID id, Func<Exception> elseThrow) {
@@ -39,7 +39,7 @@ public abstract class GenericInMemoryRepository<ID, TEntity> : IRepository<ID, T
 
     public async Task<TEntity> FindDeletedByIdOrThrow(ID id) {
         var entity = await FindDeletedById(id);
-        return entity.OrElseThrow(UserMessage: $"{typeof(TEntity).Name} not found by id: {id}");
+        return entity.OrElseThrow($"{typeof(TEntity).Name} not found by id: {id}");
     }
 
     public async Task<TEntity> FindDeletedByIdOrThrow(ID id, Func<Exception> elseThrow) {

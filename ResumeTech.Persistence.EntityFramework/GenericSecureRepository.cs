@@ -46,7 +46,7 @@ public abstract class GenericSecureRepository<ID, TEntity> : IRepository<ID, TEn
 
     public virtual async Task<TEntity> FindByIdOrThrow(ID id) {
         var entity = await FindById(id);
-        entity = entity.OrElseThrow(UserMessage: $"{typeof(TEntity).Name} not found by id: {id}");
+        entity = entity.OrElseThrow($"{typeof(TEntity).Name} not found by id: {id}");
         DoAuthorizeCanRead(entity);
         return entity;
     }
@@ -60,7 +60,7 @@ public abstract class GenericSecureRepository<ID, TEntity> : IRepository<ID, TEn
 
     public virtual async Task<TEntity> FindDeletedByIdOrThrow(ID id) {
         var entity = await FindDeletedById(id);
-        entity = entity.OrElseThrow(UserMessage: $"{typeof(TEntity).Name} not found by id: {id}");
+        entity = entity.OrElseThrow($"{typeof(TEntity).Name} not found by id: {id}");
         DoAuthorizeCanRead(entity);
         return entity;
     }

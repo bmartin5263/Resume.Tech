@@ -14,10 +14,7 @@ public class NotFoundMiddleware {
     public async Task Invoke(HttpContext context) {
         await next(context);
         if (context.Response.StatusCode == 404) {
-            throw new AppError(
-                UserMessage: $"Invalid Uri: {context.Request.Path}",
-                StatusCode: HttpStatusCode.BadRequest
-            ).ToException();
+            throw InvalidUriException.UriNotFound(context.Request.Path);
         }
     }
 }

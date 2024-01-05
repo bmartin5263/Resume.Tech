@@ -57,7 +57,7 @@ public static class SerializationUtils {
         foreach (var converter in customConverters) {
             options.Converters.Add(converter!);
         }
-
+        // options.Converters.Add(new WhiteSpaceTrimStringConverter()); // TODO
         return options;
     }
 

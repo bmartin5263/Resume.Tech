@@ -3,7 +3,7 @@ using ResumeTech.Identities.Domain;
 
 namespace ResumeTech.Identities.Command;
 
-public record LoginResponse(
+public sealed record LoginResponse(
     Jwt Token, 
     DateTimeOffset CurrentTime, 
     DateTimeOffset ExpiresAt,

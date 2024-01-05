@@ -8,7 +8,7 @@ public record EmailAddress : IWrapper<string> {
     public EmailAddress(string Value) {
         this.Value = Value;
         if (!Value.Contains('@')) {
-            throw new AppError(UserMessage: $"Malformed email address: {Value}").ToException();
+            throw new ArgumentException($"Malformed email address: {Value}");
         }
     }
     

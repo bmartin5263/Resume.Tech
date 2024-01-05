@@ -77,21 +77,19 @@ public class DuendeUserManager : IUserManager {
         var result = await UserManager.CreateAsync(user, request.Password);
 
         if (!result.Succeeded) {
-            throw AppError.Builder(HttpStatusCode.BadRequest)
-                .SubErrors(result.Errors
-                    .Where(e => e.Code.StartsWith("Password"))
-                    .Select(e => new AppSubError(
-                        Path: e.Code.StartsWith("Password") ? "password" : "username",
-                        Message: $"{e.Description}"
-                    ))
-                )
-                .ToException();
+            throw new ValidationFailedException(new FieldValidationErrors(result.Errors
+                .Where(e => e.Code.StartsWith("Password"))
+                .Select(e => new FieldError(
+                    Path: e.Code.StartsWith("Password") ? "password" : "username",
+                    Message: $"{e.Description}"
+                ))
+            ));
         }
         
         result = await UserManager.AddToRoleAsync(user, RoleName.User.ToString());
         if (!result.Succeeded) {
             var error = string.Join(", ", result.Errors.Select(e => e.Description));
-            throw new AppException($"Failed to assign 'User' role to new user. Error(s): {error}");
+            throw new InvalidOperationException($"Failed to assign 'User' role to new user. Error(s): {error}");
         }
         UnitOfWork.RaiseEvent(new UserCreatedEvent(request.Email, request.EmailConfirmed));
 
@@ -104,12 +102,10 @@ public class DuendeUserManager : IUserManager {
 
     public async Task SendConfirmEmailMessage(EmailAddress emailAddress) {
         var user = (await UserManager.FindByEmailAsync(emailAddress.Value))
-            .OrElseThrow();
+            .OrElseThrow($"No user found with email address {emailAddress}");
 
         if (user.EmailConfirmed) {
-            throw AppError.Builder(HttpStatusCode.BadRequest)
-                .UserMessage("User's email is already confirmed")
-                .ToException();
+            throw new InvalidOperationException("User's email is already confirmed");
         }
         
         // await SendEmail(EmailTemplateName.ConfirmYourEmail, user);
@@ -147,9 +143,7 @@ public class DuendeUserManager : IUserManager {
         }
         
         var label = usernameOrEmail.Contains('@') ? "email" : "username";
-        throw AppError.Builder(HttpStatusCode.BadRequest)
-            .SubError("username", message: $"No User associated with {label} {usernameOrEmail}")
-            .ToException();
+        throw new TodoException($"No User associated with {label} {usernameOrEmail}");
     }
 
     public async Task ResetPassword(EmailAddress emailAddress, string token, string newPassword) {
@@ -159,25 +153,17 @@ public class DuendeUserManager : IUserManager {
         if (!result.Succeeded) {
             var invalidTokenError = result.Errors.FirstOrDefault(e => e.Code.StartsWith("InvalidToken"));
             if (invalidTokenError != null) {
-                throw AppError.Builder(HttpStatusCode.BadRequest)
-                    .UserMessage("Unable to reset password at this time")
-                    .ToException();
+                throw new TodoException("Unable to reset password at this time");
             }
-            throw AppError.Builder(HttpStatusCode.BadRequest)
-                .SubErrors(result.Errors
-                    .Where(e => e.Code.StartsWith("Password"))
-                    .Select(e => new AppSubError(
-                        Path: e.Code.StartsWith("Password") ? "password" : "username",
-                        Message: $"{e.Description}"
-                    ))
-                )
-                .ToException();
+
+            var message = string.Join(", ", result.Errors.Select(e => e.Description));
+            throw new TodoException($"Invalid Username or Password: {message}");
         }
     }
 
     public async Task ConfirmEmail(EmailAddress emailAddress, string token) {
         var user = (await UserManager.FindByEmailAsync(emailAddress.Value))
-            .OrElseThrow();
+            .OrElseThrow($"No user with email {emailAddress}");
         
         var result = await UserManager.ConfirmEmailAsync(user, token);
         if (!result.Succeeded) {
@@ -196,31 +182,24 @@ public class DuendeUserManager : IUserManager {
         if (user == null) {
             Log.LogInformation("Missing User");
             var label = usernameOrEmail.Contains('@') ? "email" : "username";
-            throw AppError.Builder(HttpStatusCode.Unauthorized)
-                .UserMessage($"No account associated with {label} {usernameOrEmail}")
-                .ToException();
+            throw new AuthenticationException($"No account associated with {label} {usernameOrEmail}");
         }
 
         if (!await UserManager.IsEmailConfirmedAsync(user)) {
             Log.LogInformation("User Email Not Confirmed");
-            // var urlWithoutHttp = WebOptions.FrontendUrl.StripHttpProtocol();
-            throw AppError.Builder(HttpStatusCode.Unauthorized).ToException();
-            // throw Errors.Unauthorized($"Email has not been confirmed. To resend email go to {urlWithoutHttp}/resend-email").ToException();
+            throw new AuthenticationException("HttpStatusCode.Unauthorized");
         }
 
         if (await UserManager.IsLockedOutAsync(user)) {
             Log.LogInformation("User Locked Out");
-            throw AppError.Builder(HttpStatusCode.Unauthorized)
-                .UserMessage($"User is locked out until {user.LockoutEnd} ({user.LockoutEnd - DateTimeOffset.UtcNow}) due to password attempt failures")
-                .ToException();
+            throw new AuthenticationException(
+                $"User is locked out until {user.LockoutEnd} ({user.LockoutEnd - DateTimeOffset.UtcNow}) due to password attempt failures");
         }
 
         if (!await UserManager.CheckPasswordAsync(user, password)) {
             Log.LogInformation("Password Check Failed");
             await UserManager.AccessFailedAsync(user);
-            throw AppError.Builder(HttpStatusCode.Unauthorized)
-                .UserMessage("Incorrect password")
-                .ToException();
+            throw new AuthenticationException("Incorrect password");
         }
         
         if (await UserManager.GetAccessFailedCountAsync(user) > 0) {

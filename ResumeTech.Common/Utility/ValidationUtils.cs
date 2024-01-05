@@ -16,17 +16,17 @@ public static class ValidationUtils {
         int max = DefaultMaxFieldLen
     ) {
         if (self == null) {
-            throw new AppError(UserMessage: $"{field} is required").ToException();
+            throw new ArgumentException($"{field} is required");
         }
         if (trim) {
             self = self.Trim();
         }
         var len = self.Length;
         if (len > max) {
-            throw new AppError(UserMessage: $"{field} cannot exceed {max} characters").ToException();
+            throw new ArgumentException($"{field} cannot exceed {max} characters");
         }
         if (len < min) {
-            throw new AppError(UserMessage: $"{field} must have at least {min} characters").ToException();
+            throw new ArgumentException($"{field} must have at least {min} characters");
         }
 
         return self;
@@ -40,7 +40,7 @@ public static class ValidationUtils {
         int max = DefaultMaxFieldLen
     ) where TWrapper : IWrapper<string> {
         if (self == null) {
-            throw new AppError(UserMessage: $"{field} is required").ToException();
+            throw new ArgumentException($"{field} is required");
         }
         self.Value.Validate(field, trim, min, max);
         return self;
@@ -75,42 +75,38 @@ public static class ValidationUtils {
     public static string AssertMaxTrimmedLength(this string self, int max, string fieldName) {
         string trimmed = self.Trim();
         if (trimmed.Length == 0) {
-            throw new AppError(UserMessage: $"{fieldName} cannot be blank").ToException();
+            throw new ArgumentException($"{fieldName} cannot be blank");
         }
         if (trimmed.Length == 0 || trimmed.Length > max) {
-            throw new AppError(UserMessage: $"{fieldName} cannot exceed {max} characters").ToException();
+            throw new ArgumentException($"{fieldName} cannot exceed {max} characters");
         }
         return self;
     }
     
     public static IList<T> AssertNotEmpty<T>(this IList<T> self, string fieldName) {
         if (self.Count == 0) {
-            throw AppError.Builder(HttpStatusCode.BadRequest)
-                .SubError(fieldName, "Must not be empty")
-                .ToException();
+            throw new ArgumentException($"{fieldName} must not be empty");
         }
         return self;
     }
     
     public static IList<T> AssertMinSize<T>(this IList<T> self, int min, string fieldName) {
         if (self.Count < min) {
-            throw AppError.Builder(HttpStatusCode.BadRequest)
-                .SubError(fieldName, $"Size must be at least {min}")
-                .ToException();
+            throw new ArgumentException($"{fieldName} size must be at least {min}");
         }
         return self;
     }
 
     public static decimal AssertPositiveOrZero(this decimal self, string fieldName) {
         if (self < 0) {
-            throw new AppError(UserMessage: $"{fieldName} must be positive: {self}").ToException();
+            throw new ArgumentException($"{fieldName} must be positive: {self}");
         }
         return self;
     }
     
     public static decimal AssertBetween(this decimal self, decimal min, decimal max, string fieldName) {
         if (self < min || self > max) {
-            throw new AppError(UserMessage: $"{fieldName} must be between {min} and {max}: {self}").ToException();
+            throw new ArgumentException($"{fieldName} must be between {min} and {max}: {self}");
         }
         return self;
     }

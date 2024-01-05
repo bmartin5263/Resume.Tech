@@ -1,5 +1,6 @@
 using Microsoft.EntityFrameworkCore;
 using ResumeTech.Common.Auth;
+using ResumeTech.Common.Error;
 using ResumeTech.Experiences.Jobs;
 
 namespace ResumeTech.Persistence.EntityFramework;
@@ -12,7 +13,7 @@ public class JobRepository : GenericSecureRepository<JobId, Job>, IJobRepository
 
     protected override void AuthorizeCanRead(Job entity) {
         if (CurrentUser.Id != entity.OwnerId) {
-            throw new AccessDeniedException();
+            throw new AuthorizationException();
         }
     }
 

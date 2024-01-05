@@ -11,7 +11,7 @@ using ResumeTech.Identities.Users;
 
 namespace ResumeTech.Identities.Command;
 
-public class Register : Command<RegisterParameters, UserDto> {
+public class Register : Command<RegisterRequest, UserDto> {
     private static readonly ILogger Log = Logging.CreateLogger<Register>();
     public override string Name => "Register";
     public override Roles UserRoles { get; } = Roles.Public();
@@ -24,21 +24,21 @@ public class Register : Command<RegisterParameters, UserDto> {
         UserOptions = userOptions;
     }
 
-    public override async Task<UserDto> Run(RegisterParameters args) {
-        var emailExists = await UserManager.UserExistsByEmail(args.Email);
+    public override async Task Validate(ValidationContext<RegisterRequest> ctx) {
+        var request = ctx.GetRequest();
+        
+        var emailExists = await UserManager.UserExistsByEmail(request.Email);
         if (emailExists) {
-            throw AppError.Builder(HttpStatusCode.BadRequest)
-                .SubError(new AppSubError(Path: "email", Message: "An account with this email already exists"))
-                .ToException();
+            ctx.AddError("email", "An account with this email already exists");
         }
 
-        var userExists = await UserManager.UserExistsByUsername(args.Username);
+        var userExists = await UserManager.UserExistsByUsername(request.Username);
         if (userExists) {
-            throw AppError.Builder(HttpStatusCode.BadRequest)
-                .SubError(new AppSubError(Path: "username", Message: "Username is already taken"))
-                .ToException();
+            ctx.AddError("username", "An account with this username already exists");
         }
+    }
 
+    public override async Task<UserDto> Run(RegisterRequest args) {
         var createRequest = new CreateUserRequest(
             Id: UserId.Generate(),
             Email: args.Email,

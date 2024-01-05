@@ -1,6 +1,7 @@
 using System.Net;
 using Microsoft.Extensions.Logging;
 using ResumeTech.Common.Auth;
+using ResumeTech.Common.Error;
 using ResumeTech.Common.Events;
 using ResumeTech.Common.Utility;
 
@@ -60,7 +61,7 @@ public class Exec : IExec {
         }
         
         if (user.Id == null) {
-            throw new AccessDeniedException("Not logged in", HttpStatusCode.Unauthorized);
+            throw new AuthorizationException("User is not logged in");
         }
         
         command.UserRoles.Authorize(user);
@@ -72,7 +73,20 @@ public class Exec : IExec {
         Log.LogInformation($"{username} is executing Command {command.Name}");
 
         Authenticate(command, user);
-        await command.Validate(user, args);
+
+        var validationContext = new ValidationContext<I?>(args, user);
+
+        try {
+            await command.Validate(validationContext);
+        }
+        catch (StopValidationException) {
+            // Do nothing
+        }
+
+        if (validationContext.Failed) {
+            throw new ValidationFailedException(validationContext.Error!);
+        }
+        
         var result = await command.Run(args);
         await UnitOfWork.Commit(); // saves db changes
         
@@ -115,7 +129,7 @@ public class Exec : IExec {
         Log.LogInformation($"{username} is executing Query {query.Name}");
 
         Authenticate(query, user);
-        await query.Validate(user, args);
+        // await query.Validate(user, args);
         return await query.Run(args);
     }
 
